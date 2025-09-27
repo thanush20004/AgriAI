@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Fertilizer Guidance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color-light: #eaf7e6;
+            --bg-color-dark: #1f2833;
+            --card-bg-light: rgba(255, 255, 255, 0.2);
+            --card-bg-dark: rgba(255, 255, 255, 0.05);
+            --card-border-light: rgba(255, 255, 255, 0.3);
+            --card-border-dark: rgba(255, 255, 255, 0.1);
+            --text-color-light: #333;
+            --text-color-dark: #e0e0e0;
+            --heading-color-light: #16a085;
+            --heading-color-dark: #2ecc71;
+            --sub-heading-color-light: #27ae60;
+            --sub-heading-color-dark: #2980b9;
+            --input-border-light: #ccc;
+            --input-border-dark: #555;
+            --input-focus-light: #16a085;
+            --input-focus-dark: #2ecc71;
+            --btn-bg-start-light: #27ae60;
+            --btn-bg-end-light: #16a085;
+            --btn-bg-start-dark: #2ecc71;
+            --btn-bg-end-dark: #2980b9;
+            --progress-bar-bg: #e0e0e0;
+            --progress-bar-fill-n: #3498db;
+            --progress-bar-fill-p: #f39c12;
+            --progress-bar-fill-k: #e74c3c;
+            --shadow-light: 0 4px 30px rgba(0, 0, 0, 0.1);
+            --shadow-dark: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --blur: 10px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: linear-gradient(135deg, #0b0c0f, #1f2833);
+            color: var(--text-color-dark);
+        }
+        .dark-mode .container {
+            background-color: var(--bg-color-dark);
+        }
+        .dark-mode .card, .dark-mode .about-panel {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--card-border-dark);
+            box-shadow: var(--shadow-dark);
+        }
+        .dark-mode h1, .dark-mode h2, .dark-mode .section-header {
+            color: var(--heading-color-dark);
+        }
+        .dark-mode h3 {
+             color: var(--sub-heading-color-dark);
+        }
+        .dark-mode input, .dark-mode select {
+            background-color: #2c3e50;
+            color: var(--text-color-dark);
+            border-color: var(--input-border-dark);
+        }
+        .dark-mode input:focus, .dark-mode select:focus {
+            box-shadow: 0 0 0 2px var(--input-focus-dark);
+        }
+        .dark-mode .btn-primary {
+            background: linear-gradient(135deg, var(--btn-bg-start-dark), var(--btn-bg-end-dark));
+        }
+        .dark-mode .btn-secondary {
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+        .dark-mode .result-table th {
+            background-color: #34495e;
+            border-color: #444;
+        }
+        .dark-mode .result-table td {
+            background-color: #2c3e50;
+            border-color: #444;
+        }
+        .dark-mode .dark-mode-toggle {
+            background: var(--btn-bg-end-dark);
+            color: #f1c40f;
+        }
+        .dark-mode .badge {
+            background-color: #2c3e50;
+        }
+        .dark-mode .progress-bar-fill {
+            box-shadow: 0 0 10px var(--progress-bar-fill-n);
+        }
+        .dark-mode .progress-bar-fill.p {
+            box-shadow: 0 0 10px var(--progress-bar-fill-p);
+        }
+        .dark-mode .progress-bar-fill.k {
+            box-shadow: 0 0 10px var(--progress-bar-fill-k);
+        }
+        .dark-mode .tooltip-box {
+            background-color: rgba(44, 62, 80, 0.9);
+            border: 1px solid rgba(52, 73, 94, 0.9);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color-light), #d9f0d1);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            color: var(--text-color-light);
+            transition: background var(--transition-speed), color var(--transition-speed);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: var(--heading-color-light);
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--sub-heading-color-light);
+            border-bottom: 2px solid var(--heading-color-light);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        h3 {
+             font-size: 1.25rem;
+             color: var(--sub-heading-color-light);
+             margin-top: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg-light);
+            border: 1px solid var(--card-border-light);
+            backdrop-filter: blur(var(--blur));
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--heading-color-light);
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .input-wrapper {
+            flex-grow: 1;
+            min-width: 0; /* Prevent overflow */
+            margin-bottom: 0.5rem;
+        }
+        .input-wrapper.half {
+            width: calc(50% - 0.5rem);
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--input-border-light);
+            background-color: transparent;
+            color: inherit;
+            font-size: 1rem;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+        input:hover, select:hover {
+            border-color: var(--input-focus-light);
+        }
+        input:focus, select:focus {
+            border-color: var(--input-focus-light);
+            box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+        }
+
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip-icon {
+            cursor: pointer;
+            font-weight: bold;
+            color: #aaa;
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+        .tooltip-box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: var(--shadow-light);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity var(--transition-speed);
+        }
+        .tooltip-icon:hover + .tooltip-box,
+        .tooltip-box.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--btn-bg-start-light), var(--btn-bg-end-light));
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            filter: brightness(1.1);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .results-card {
+            display: none;
+            animation: fadeInScaleUp 0.5s ease-out forwards;
+        }
+        @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .results-card.hidden {
+            animation: fadeOutScaleDown 0.5s ease-out forwards;
+        }
+        @keyframes fadeOutScaleDown {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(20px) scale(0.95); }
+        }
+
+        .result-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--progress-bar-bg);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            transition: width 1s ease-out;
+        }
+        .progress-bar-fill.n { background-color: var(--progress-bar-fill-n); }
+        .progress-bar-fill.p { background-color: var(--progress-bar-fill-p); }
+        .progress-bar-fill.k { background-color: var(--progress-bar-fill-k); }
+
+        .result-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: left;
+        }
+        .result-table th, .result-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-table th {
+            background-color: #f5f5f5;
+            color: #777;
+            font-weight: 600;
+        }
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+        .dark-mode .result-table tr:last-child td {
+            border-bottom: 1px solid #444;
+        }
+        
+        .result-table td {
+            background-color: #fff;
+        }
+        
+        .dark-mode .result-table td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .dark-mode .result-table td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            background-color: #e74c3c;
+            margin-left: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--input-border-light);
+            background-color: transparent;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--sub-heading-color-light);
+        }
+        .action-btn:hover {
+            transform: scale(1.1);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .loading-spinner {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+        }
+        .dark-mode .loading-spinner {
+             background-color: rgba(0, 0, 0, 0.6);
+        }
+        .spinner-icon {
+            font-size: 3rem;
+            animation: grow-and-shrink 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes grow-and-shrink {
+            from { transform: scale(0.8); }
+            to { transform: scale(1.1); }
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+        .toast {
+            background-color: rgba(39, 174, 96, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: toast-in 0.5s ease-out forwards;
+        }
+        @keyframes toast-in {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .dark-mode-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background-color: #f1c40f;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed);
+        }
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .about-panel {
+            background: var(--card-bg-light);
+            border: 1px solid var(--card-border-light);
+            backdrop-filter: blur(var(--blur));
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all var(--transition-speed);
+        }
+        .about-header {
+            cursor: pointer;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--heading-color-light);
+        }
+        .about-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 2rem;
+        }
+        .about-panel.expanded .about-content {
+            max-height: 500px;
+            padding: 1rem 2rem 2rem;
+        }
+        .about-panel.expanded .arrow-icon {
+            transform: rotate(180deg);
+        }
+        .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Fertilizer Price Inputs */
+        .fertilizer-prices .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .fertilizer-prices .price-input {
+            width: 100%;
+            margin: 0;
+        }
+
+        .price-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .currency-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 5px;
+            font-weight: normal;
+        }
+
+        .fertilizer-prices input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-left: 25px; /* Make space for the currency symbol */
+        }
+
+        .price-range {
+            display: block;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .fertilizer-prices .price-input {
+            margin-bottom: 1rem;
+        }
+
+        /* Input validation styling */
+        .fertilizer-prices input:invalid {
+            border-color: #e74c3c;
+        }
+
+        .fertilizer-prices input:focus {
+            border-color: var(--input-focus-light);
+            box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+        }
+
+        /* Style for the total cost display */
+        .result-table .total-cost {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        .result-table .cost-note {
+            font-size: 0.8em;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .input-group:not(.fertilizer-prices .input-group) {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .input-wrapper.half {
+                width: 100%;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode">🌙</button>
+        <h1>🌱 Fertilizer Guidance</h1>
+    
+        <div id="calculatorCard" class="card calculator-card">
+            <div class="section-header">
+                <span style="font-size:1.5em;">🌾</span> Smart Dosage Calculator
+            </div>
+    
+            <form id="fertilizerForm">
+                <div class="form-group">
+                    <label for="crop" class="input-label">Crop <span class="tooltip-icon" data-tooltip="Select the crop you are growing.">?</span></label>
+                    <select id="crop" required>
+                        <option value="">Select a crop...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="soilType" class="input-label">Soil Type <span class="tooltip-icon" data-tooltip="Enter your soil's texture, e.g., 'Sandy Loam'.">?</span></label>
+                    <select id="soilType" required disabled>
+                        <option value="">Select soil type...</option>
+                    </select>
+                </div>
+    
+                <div class="form-group input-wrapper">
+                    <label for="area" class="input-label">Area (ha) <span class="tooltip-icon" data-tooltip="The total area of your farm in hectares.">?</span></label>
+                    <input type="number" id="area" placeholder="e.g. 5" step="0.1" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="soilNPK" class="input-label">Current Soil NPK (kg/ha) <span class="tooltip-icon" data-tooltip="The current Nitrogen (N), Phosphorus (P), and Potassium (K) in your soil in kilograms per hectare.">?</span></label>
+                    <div class="input-group">
+                        <input type="number" id="soilN" placeholder="N" step="0.1" required>
+                        <input type="number" id="soilP" placeholder="P" step="0.1" required>
+                        <input type="number" id="soilK" placeholder="K" step="0.1" required>
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label for="soilPh" class="input-label">Soil pH <span class="tooltip-icon" data-tooltip="The pH of your soil. Ideal pH is typically 6.0 - 7.0.">?</span></label>
+                    <input type="number" id="soilPh" placeholder="e.g. 6.5" step="0.1">
+                </div>
+    
+                <div class="form-group">
+                    <label for="preset" class="input-label">Or, use a Preset Scenario 💡</label>
+                    <select id="preset">
+                        <option value="">Select a preset...</option>
+                        <option value="low_npk">Low NPK Soil</option>
+                        <option value="high_npk">High NPK Soil</option>
+                        <option value="acidic_soil">Acidic Soil</option>
+                    </select>
+                </div>
+                
+                <div class="section-header">
+                    <span style="font-size:1.5em;">💰</span> Fertilizer Prices
+                    <span style="font-size: 0.8em; font-weight: normal; margin-left: 10px;">(in Indian Rupees ₹)</span>
+                </div>
+                <p style="font-size: 0.9em; margin-top: -1rem; margin-bottom: 1rem; color: #777;">
+                    Default prices are set to current market rates including government subsidies. You can adjust the prices based on your local market rates. All prices are in Indian Rupees (₹) per kilogram.
+                </p>
+                <p style="font-size: 0.85em; margin-top: -0.5rem; margin-bottom: 1rem; color: #666;">
+                    <strong>Note:</strong> Prices may vary based on location, season, and government subsidies. Urea prices are typically regulated and subsidized by the government.
+                </p>
+                <div class="form-group fertilizer-prices">
+                    <div class="input-group">
+                        <div class="input-wrapper price-input">
+                            <label for="priceUrea" class="input-label">Urea Price <span class="currency-label">₹/kg</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="number" id="priceUrea" value="5.5" step="0.1" placeholder="5-6 ₹/kg">
+                            </div>
+                            <span class="price-range">Subsidized rate: ₹5-6/kg</span>
+                        </div>
+                        <div class="input-wrapper price-input">
+                            <label for="priceDAP" class="input-label">DAP Price <span class="currency-label">₹/kg</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="number" id="priceDAP" value="27" step="0.1" placeholder="25-30 ₹/kg">
+                            </div>
+                            <span class="price-range">Market rate: ₹25-30/kg</span>
+                        </div>
+                        <div class="input-wrapper price-input">
+                            <label for="priceSSP" class="input-label">SSP Price <span class="currency-label">₹/kg</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="number" id="priceSSP" value="7" step="0.1" placeholder="5-10 ₹/kg">
+                            </div>
+                            <span class="price-range">Market rate: ₹5-10/kg</span>
+                        </div>
+                        <div class="input-wrapper price-input">
+                            <label for="priceMOP" class="input-label">MOP Price <span class="currency-label">₹/kg</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="number" id="priceMOP" value="15" step="0.1" placeholder="12-20 ₹/kg">
+                            </div>
+                            <span class="price-range">Market rate: ₹12-20/kg</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="calculateBtn">Calculate</button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </form>
+        </div>
+    
+        <div id="resultsCard" class="card results-card" style="display: none;">
+            <div class="section-header">
+                <span style="font-size:1.5em;">🌿</span> Your Recommendations
+            </div>
+            
+            <h3 id="resultSummary"></h3>
+            
+            <div class="result-item">
+                <h4 style="display: flex; align-items: center; gap: 5px;">NPK Deficit (kg/ha) <span class="tooltip-icon" data-tooltip="The difference between your soil's current NPK levels and the target levels for your crop.">?</span></h4>
+                <div class="progress-bar-container">
+                    <div class="progress-label">N: <span id="deficitN"></span></div>
+                    <div class="progress-bar"><div id="progressN" class="progress-bar-fill n"></div></div>
+                    
+                    <div class="progress-label">P: <span id="deficitP"></span></div>
+                    <div class="progress-bar"><div id="progressP" class="progress-bar-fill p"></div></div>
+                    
+                    <div class="progress-label">K: <span id="deficitK"></span></div>
+                    <div class="progress-bar"><div id="progressK" class="progress-bar-fill k"></div></div>
+                </div>
+            </div>
+            
+            <h4 style="display: flex; align-items: center; gap: 5px;">Fertilizer Recommendation <span class="tooltip-icon" data-tooltip="Recommended fertilizer amounts per hectare and total for your area, split by growth stage.">?</span></h4>
+            <p style="font-size: 0.9em; margin-top: -1rem; margin-bottom: 1rem; color: #777;">Recommendation split for <strong>Vegetative</strong>, <strong>Flowering</strong>, and <strong>Fruiting</strong> stages.</p>
+    
+            <div id="recommendationDetails"></div>
+    
+            <div class="result-item">
+                <table class="result-table">
+                    <tfoot>
+                        <tr>
+                            <th colspan="2">Total Estimated Cost</th>
+                            <td id="totalCost"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+    
+            <div class="action-buttons">
+                <button class="action-btn tooltip-container" id="copyBtn" aria-label="Copy to clipboard">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <div class="tooltip-box">Copy JSON</div>
+                </button>
+                <button class="action-btn tooltip-container" id="printBtn" aria-label="Print recommendation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <div class="tooltip-box">Print</div>
+                </button>
+            </div>
+        </div>
+        
+        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <span class="spinner-icon">🌱</span>
+            <p>Loading Data...</p>
+        </div>
+    
+        <div id="toast-container"></div>
+        
+        <div class="about-panel" id="aboutPanel">
+            <div class="about-header">
+                <span>About this Calculator & Disclaimer</span>
+                <span class="arrow-icon">▼</span>
+            </div>
+            <div class="about-content">
+                <p>This tool provides a basic fertilizer recommendation based on simplified models. The calculations are based on assumed NPK content and are for guidance only. Actual nutrient requirements may vary significantly due to soil organic matter, climate, and specific crop varieties.</p>
+                <p><strong>Disclaimer:</strong> This is not a substitute for professional agricultural advice or a comprehensive soil analysis. Always consult with a local agronomist before applying any fertilizer.</p>
+                <ul>
+                    <li><strong>Urea:</strong> Assumed 46% N</li>
+                    <li><strong>DAP:</strong> Assumed 18% N, 46% P₂O₅</li>
+                    <li><strong>SSP:</strong> Assumed 16% P₂O₅</li>
+                    <li><strong>MOP:</strong> Assumed 60% K₂O</li>
+                    <li><strong>Organic Compost:</strong> Assumed 1% N, 1% P, 1% K</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const calculatorCard = document.getElementById('calculatorCard');
+            const resultsCard = document.getElementById('resultsCard');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const fertilizerForm = document.getElementById('fertilizerForm');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const copyBtn = document.getElementById('copyBtn');
+            const printBtn = document.getElementById('printBtn');
+            const aboutPanel = document.getElementById('aboutPanel');
+            const recommendationDetails = document.getElementById('recommendationDetails');
+            const totalCostEl = document.getElementById('totalCost');
+            const cropSelect = document.getElementById('crop');
+            const soilTypeSelect = document.getElementById('soilType');
+            const varietySelect = document.getElementById('variety');
+    
+            // --- Data ---
+            const CROP_DATA = [
+                { Crop: "Wheat", Soil_Type: "Clay", Variety: "Soft Red", Nitrogen: 69.07, Phosphorus: 53.95, Potassium: 88.06 },
+                { Crop: "Tomato", Soil_Type: "Clay", Variety: "Beefsteak", Nitrogen: 107.32, Phosphorus: 70.10, Potassium: 32.08 },
+                { Crop: "Cotton", Soil_Type: "Clay", Variety: "Pima", Nitrogen: 130.63, Phosphorus: 67.20, Potassium: 28.29 },
+                { Crop: "Maize", Soil_Type: "Loam", Variety: "Dent", Nitrogen: 125.43, Phosphorus: 63.95, Potassium: 34.42 },
+                { Crop: "Soybean", Soil_Type: "Loam", Variety: "Glycine max", Nitrogen: 110.15, Phosphorus: 30.72, Potassium: 50.31 },
+                { Crop: "Potato", Soil_Type: "Peaty", Variety: "Red", Nitrogen: 129.03, Phosphorus: 60.15, Potassium: 80.01 },
+                { Crop: "Rice", Soil_Type: "Saline", Variety: "Jasmine", Nitrogen: 34.63, Phosphorus: 43.65, Potassium: 79.38 },
+                { Crop: "Tomato", Soil_Type: "Sandy", Variety: "Beefsteak", Nitrogen: 6.95, Phosphorus: 82.10, Potassium: 50.10 },
+                { Crop: "Wheat", Soil_Type: "Silty", Variety: "Hard Red", Nitrogen: 102.54, Phosphorus: 41.57, Potassium: 50.40 },
+                { Crop: "Barley", Soil_Type: "Silty", Variety: "2-Row", Nitrogen: 120.31, Phosphorus: 55.45, Potassium: 70.81 },
+                { Crop: "Sugarcane", Soil_Type: "Clay", Variety: "Coimbatore", Nitrogen: 140.23, Phosphorus: 75.60, Potassium: 120.50 },
+                { Crop: "Onion", Soil_Type: "Loam", Variety: "Yellow Globe", Nitrogen: 80.50, Phosphorus: 45.30, Potassium: 100.45 },
+                { Crop: "Millet", Soil_Type: "Sandy", Variety: "Finger Millet", Nitrogen: 55.65, Phosphorus: 35.80, Potassium: 60.25 },
+                { Crop: "Banana", Soil_Type: "Loam", Variety: "Cavendish", Nitrogen: 135.20, Phosphorus: 30.55, Potassium: 150.75 },
+                { Crop: "Cabbage", Soil_Type: "Clay", Variety: "Green", Nitrogen: 110.40, Phosphorus: 50.70, Potassium: 95.80 },
+                { Crop: "Cauliflower", Soil_Type: "Loam", Variety: "Snowball", Nitrogen: 105.70, Phosphorus: 48.20, Potassium: 90.50 },
+                { Crop: "Brinjal", Soil_Type: "Sandy", Variety: "Purple", Nitrogen: 95.30, Phosphorus: 40.10, Potassium: 85.60 },
+                { Crop: "Chili", Soil_Type: "Loam", Variety: "Jwala", Nitrogen: 100.80, Phosphorus: 42.50, Potassium: 92.10 },
+                { Crop: "Cucumber", Soil_Type: "Clay", Variety: "Pickling", Nitrogen: 90.60, Phosphorus: 38.40, Potassium: 78.90 },
+                { Crop: "Pumpkin", Soil_Type: "Sandy", Variety: "Jack O'Lantern", Nitrogen: 85.90, Phosphorus: 45.10, Potassium: 88.70 },
+                { Crop: "Carrot", Soil_Type: "Loam", Variety: "Danvers", Nitrogen: 60.10, Phosphorus: 30.50, Potassium: 70.20 },
+                { Crop: "Pea", Soil_Type: "Silty", Variety: "Snap Pea", Nitrogen: 50.20, Phosphorus: 25.40, Potassium: 55.30 },
+                { Crop: "Green Gram", Soil_Type: "Sandy", Variety: "Moong", Nitrogen: 45.80, Phosphorus: 22.90, Potassium: 48.70 },
+                { Crop: "Black Gram", Soil_Type: "Clay", Variety: "Urad", Nitrogen: 48.10, Phosphorus: 24.30, Potassium: 50.10 },
+                { Crop: "Mustard", Soil_Type: "Loam", Variety: "Brown", Nitrogen: 70.40, Phosphorus: 35.50, Potassium: 65.80 },
+                { Crop: "Sunflower", Soil_Type: "Clay", Variety: "Tall", Nitrogen: 85.90, Phosphorus: 40.20, Potassium: 75.30 },
+                { Crop: "Papaya", Soil_Type: "Sandy", Variety: "Solo", Nitrogen: 105.60, Phosphorus: 50.10, Potassium: 110.20 },
+                { Crop: "Mango", Soil_Type: "Loam", Variety: "Alphonso", Nitrogen: 98.70, Phosphorus: 45.30, Potassium: 105.40 },
+                { Crop: "Pineapple", Soil_Type: "Sandy", Variety: "Smooth Cayenne", Nitrogen: 88.50, Phosphorus: 38.60, Potassium: 95.70 },
+                { Crop: "Ginger", Soil_Type: "Clay", Variety: "Indian", Nitrogen: 100.10, Phosphorus: 48.20, Potassium: 102.50 },
+                { Crop: "Turmeric", Soil_Type: "Loam", Variety: "Madras", Nitrogen: 95.40, Phosphorus: 45.10, Potassium: 98.30 },
+                { Crop: "Coriander", Soil_Type: "Sandy", Variety: "Slow Bolt", Nitrogen: 60.70, Phosphorus: 28.50, Potassium: 55.80 },
+                { Crop: "Fenugreek", Soil_Type: "Loam", Variety: "Methi", Nitrogen: 55.80, Phosphorus: 26.30, Potassium: 52.40 },
+                { Crop: "Spinach", Soil_Type: "Silty", Variety: "Bloomsdale", Nitrogen: 80.40, Phosphorus: 35.90, Potassium: 65.20 },
+                { Crop: "Lettuce", Soil_Type: "Sandy", Variety: "Iceberg", Nitrogen: 75.10, Phosphorus: 32.50, Potassium: 60.90 },
+                { Crop: "Okra", Soil_Type: "Clay", Variety: "Lady's Finger", Nitrogen: 88.60, Phosphorus: 40.10, Potassium: 78.50 },
+                { Crop: "Beetroot", Soil_Type: "Loam", Variety: "Detroit Dark Red", Nitrogen: 78.90, Phosphorus: 38.40, Potassium: 75.30 },
+                { Crop: "Radish", Soil_Type: "Sandy", Variety: "Cherry Belle", Nitrogen: 65.20, Phosphorus: 30.10, Potassium: 62.40 },
+                { Crop: "Sweet Potato", Soil_Type: "Silty", Variety: "Beauregard", Nitrogen: 92.50, Phosphorus: 45.60, Potassium: 90.70 },
+                { Crop: "Strawberry", Soil_Type: "Loam", Variety: "Chandler", Nitrogen: 70.30, Phosphorus: 35.20, Potassium: 85.10 },
+                { Crop: "Almond", Soil_Type: "Clay", Variety: "Nonpareil", Nitrogen: 120.80, Phosphorus: 60.30, Potassium: 105.90 },
+                { Crop: "Cashew", Soil_Type: "Sandy", Variety: "Goan", Nitrogen: 115.60, Phosphorus: 55.40, Potassium: 100.20 },
+                { Crop: "Coffee", Soil_Type: "Loam", Variety: "Arabica", Nitrogen: 98.50, Phosphorus: 48.70, Potassium: 90.30 },
+                { Crop: "Tea", Soil_Type: "Silty", Variety: "Assam", Nitrogen: 110.20, Phosphorus: 52.80, Potassium: 95.10 },
+                { Crop: "Apple", Soil_Type: "Clay", Variety: "Gala", Nitrogen: 105.90, Phosphorus: 50.10, Potassium: 115.40 },
+                { Crop: "Pomegranate", Soil_Type: "Sandy", Variety: "Bhagwa", Nitrogen: 95.40, Phosphorus: 48.70, Potassium: 108.60 },
+                { Crop: "Guava", Soil_Type: "Loam", Variety: "Lucknow 49", Nitrogen: 88.30, Phosphorus: 42.10, Potassium: 98.50 }
+            ];
+            
+            const cropIcons = {
+                "wheat": "🌾", "rice": "🍚", "maize": "🌽", "groundnut": "🥜", "barley": "🌾",
+                "sugarcane": "🌿", "soybean": "🌱", "cotton": "🌿", "tomato": "🍅", "potato": "🥔",
+                "onion": "🧅", "millet": "🌾", "banana": "🍌", "cabbage": "🥬", "cauliflower": "🥦",
+                "brinjal": "🍆", "chili": "🌶️", "cucumber": "🥒", "pumpkin": "🎃", "carrot": "🥕",
+                "pea": "🫛", "green gram": "🌱", "black gram": "🌱", "mustard": "🌱", "sunflower": "🌻",
+                "papaya": "🥭", "mango": "🥭", "pineapple": "🍍", "ginger": "🫚", "turmeric": " rhizome",
+                "coriander": "🌿", "fenugreek": "🌿", "spinach": "🍃", "lettuce": "🥬", "okra": "🌱",
+                "beetroot": "🍠", "radish": "🥕", "sweet potato": "🍠", "strawberry": "🍓", "almond": "🌰",
+                "cashew": "🥜", "coffee": "☕", "tea": "🍵", "apple": "🍎", "pomegranate": "🍎",
+                "guava": "🍐"
+            };
+    
+            const FERTILIZER_DATA = {
+                urea: { n: 0.46, p: 0, k: 0 },       // 46% N
+                dap: { n: 0.18, p: 0.46, k: 0 },     // 18% N, 46% P2O5
+                ssp: { n: 0, p: 0.16, k: 0 },        // 16% P2O5
+                mop: { n: 0, p: 0, k: 0.60 },        // 60% K2O
+                // Conversion factors
+                p2o5_to_p: 0.437,                    // P = P2O5 * 0.437
+                k2o_to_k: 0.830,                     // K = K2O * 0.830
+            };
+            
+            const CROP_STAGE_DISTRIBUTION = {
+                vegetative: { n: 0.4, p: 0.6, k: 0.2 },  // Early growth needs more N and P
+                flowering: { n: 0.35, p: 0.3, k: 0.4 },  // Flowering needs balanced nutrition
+                fruiting: { n: 0.25, p: 0.1, k: 0.4 }   // Fruiting needs more K
+            };
+
+            // --- Core Functions ---
+            const showResults = () => {
+                loadingSpinner.style.display = 'none';
+                resultsCard.style.display = 'block';
+                resultsCard.classList.remove('hidden');
+                showToast('✅ Recommendations ready!');
+            };
+            
+            const hideResults = () => {
+                 resultsCard.classList.add('hidden');
+                 setTimeout(() => {
+                    resultsCard.style.display = 'none';
+                 }, 500); // Match CSS animation duration
+            };
+    
+            const calculateFertilizer = () => {
+                // Get input values
+                const crop = cropSelect.value;
+                const soilType = soilTypeSelect.value;
+                const area = parseFloat(document.getElementById('area').value);
+                const soilN = parseFloat(document.getElementById('soilN').value);
+                const soilP = parseFloat(document.getElementById('soilP').value);
+                const soilK = parseFloat(document.getElementById('soilK').value);
+
+                console.log('Input values:', {
+                    crop,
+                    soilType,
+                    area,
+                    soilNPK: { soilN, soilP, soilK }
+                });
+                const prices = {
+                    urea: parseFloat(document.getElementById('priceUrea').value),
+                    dap: parseFloat(document.getElementById('priceDAP').value),
+                    ssp: parseFloat(document.getElementById('priceSSP').value),
+                    mop: parseFloat(document.getElementById('priceMOP').value),
+                };
+    
+                hideResults();
+                loadingSpinner.style.display = 'flex';
+    
+                setTimeout(() => {
+                    if (!crop || !soilType || isNaN(area) || isNaN(soilN) || isNaN(soilP) || isNaN(soilK) || Object.values(prices).some(isNaN)) {
+                        showToast('⚠️ Please fill in all required fields.', 'error');
+                        loadingSpinner.style.display = 'none';
+                        return;
+                    }
+    
+                    // Find matching crop data
+                    const filteredData = CROP_DATA.filter(d => 
+                        d.Crop.toLowerCase().replace(/\s+/g, "_") === crop && 
+                        d.Soil_Type.toLowerCase().replace(/\s+/g, "_") === soilType
+                    );
+    
+                    if (filteredData.length === 0) {
+                        console.log('No match found for:', { crop, soilType });
+                        showToast('⚠️ No data found for the selected combination. Please choose different options or try again.', 'error');
+                        loadingSpinner.style.display = 'none';
+                        return;
+                    }
+    
+                    // Calculate target NPK values
+                    const targetN = Math.round(filteredData.reduce((sum, item) => sum + item.Nitrogen, 0) / filteredData.length);
+                    const targetP = Math.round(filteredData.reduce((sum, item) => sum + item.Phosphorus, 0) / filteredData.length);
+                    const targetK = Math.round(filteredData.reduce((sum, item) => sum + item.Potassium, 0) / filteredData.length);
+                    
+                    console.log('Target NPK:', { targetN, targetP, targetK });
+                    console.log('Soil NPK:', { soilN, soilP, soilK });
+
+                    // Calculate deficits in kg/ha
+                    const deficitN = Math.max(0, targetN - soilN);
+                    const deficitP = Math.max(0, targetP - soilP);
+                    const deficitK = Math.max(0, targetK - soilK);
+                    
+                    console.log('Deficits:', { deficitN, deficitP, deficitK });
+
+                    // Ensure we have actual deficits to work with
+                    if (deficitN === 0 && deficitP === 0 && deficitK === 0) {
+                        showToast('ℹ️ Your soil already has sufficient nutrients for this crop.', 'info');
+                        loadingSpinner.style.display = 'none';
+                        return;
+                    }
+
+                    const recommendationsByStage = {};
+                    let overallTotalCost = 0;
+
+                    // Calculate recommendations for each growth stage
+                    for (const stage in CROP_STAGE_DISTRIBUTION) {
+                        // Calculate stage-specific nutrient requirements
+                        const stageDeficitN = Math.round(deficitN * CROP_STAGE_DISTRIBUTION[stage].n);
+                        const stageDeficitP = Math.round(deficitP * CROP_STAGE_DISTRIBUTION[stage].p);
+                        const stageDeficitK = Math.round(deficitK * CROP_STAGE_DISTRIBUTION[stage].k);
+                        
+                        console.log(`${stage} stage deficits:`, { stageDeficitN, stageDeficitP, stageDeficitK });
+
+                        // Get fertilizer mix for this stage
+                        const stageRec = optimizeFertilizerMix(stageDeficitN, stageDeficitP, stageDeficitK);
+                        console.log(`${stage} stage recommendations:`, stageRec);
+                        
+                        recommendationsByStage[stage] = stageRec;
+                        const stageCost = calculateTotalCost(stageRec, prices);
+                        console.log(`${stage} stage cost:`, stageCost);
+                        overallTotalCost += stageCost;
+                    }
+
+                    updateResults(deficitN, deficitP, deficitK, recommendationsByStage, area, overallTotalCost, crop);
+                    showResults();
+                }, 1500); // Simulated 1.5s delay
+            };
+            
+            const optimizeFertilizerMix = (deficitN, deficitP, deficitK) => {
+                console.log('Input deficits (kg/ha):', { deficitN, deficitP, deficitK });
+                const recommendations = { urea: 0, dap: 0, ssp: 0, mop: 0 };
+
+                // Skip calculation if all deficits are 0
+                if (deficitN === 0 && deficitP === 0 && deficitK === 0) {
+                    return recommendations;
+                }
+
+                // Constants for fertilizer nutrient content (as decimals)
+                const UREA_N = 0.46;    // 46% N
+                const DAP_N = 0.18;     // 18% N
+                const DAP_P = 0.46;     // 46% P2O5
+                const SSP_P = 0.16;     // 16% P2O5
+                const MOP_K = 0.60;     // 60% K2O
+
+                // Conversion factors for nutrient forms
+                const P_TO_P2O5 = 2.29;  // Convert P to P2O5
+                const K_TO_K2O = 1.2;    // Convert K to K2O
+
+                // Convert elemental nutrients to oxide form
+                const p2o5Required = deficitP * P_TO_P2O5;
+                const k2oRequired = deficitK * K_TO_K2O;
+
+                console.log('Oxide form requirements:', {
+                    p2o5Required,
+                    k2oRequired,
+                    deficitN
+                });
+
+                // 1. First calculate DAP requirement based on P needs
+                if (p2o5Required > 0) {
+                    // Use 60% of P requirement from DAP (provides both N and P)
+                    const dapP2O5 = p2o5Required * 0.6;
+                    recommendations.dap = Math.ceil(dapP2O5 / DAP_P);
+                    
+                    // Calculate N contribution from DAP
+                    const nFromDap = recommendations.dap * DAP_N;
+                    deficitN = Math.max(0, deficitN - nFromDap);
+
+                    // Use SSP for remaining 40% of P requirement
+                    const sspP2O5 = p2o5Required * 0.4;
+                    recommendations.ssp = Math.ceil(sspP2O5 / SSP_P);
+                }
+
+                // 2. Calculate MOP for K requirement
+                if (k2oRequired > 0) {
+                    recommendations.mop = Math.ceil(k2oRequired / MOP_K);
+                }
+
+                // 3. Calculate Urea for remaining N requirement
+                if (deficitN > 0) {
+                    recommendations.urea = Math.ceil(deficitN / UREA_N);
+                }
+
+                console.log('Initial recommendations (kg/ha):', {...recommendations});
+
+                // 4. Apply soil condition adjustments
+                const soilPh = parseFloat(document.getElementById('soilPh').value) || 6.5;
+                const soilType = document.getElementById('soilType').value;
+
+                // Calculate pH adjustment factor
+                let phFactor = 1;
+                if (soilPh < 5.5) {
+                    phFactor = 1.3;        // Very acidic soil needs much more
+                } else if (soilPh < 6.0) {
+                    phFactor = 1.2;        // Moderately acidic
+                } else if (soilPh > 7.5) {
+                    phFactor = 1.25;       // Alkaline soil
+                } else if (soilPh > 7.0) {
+                    phFactor = 1.15;       // Slightly alkaline
+                } else {
+                    phFactor = 1;          // Optimal pH range (6.0-7.0)
+                }
+
+                // Calculate soil type adjustment factor
+                let soilFactor = 1;
+                switch(soilType) {
+                    case 'sandy':
+                        soilFactor = 1.3;    // Sandy soils need more due to leaching
+                        break;
+                    case 'clay':
+                        soilFactor = 0.85;   // Clay soils need less due to better retention
+                        break;
+                    case 'loam':
+                        soilFactor = 1;      // Loam is ideal
+                        break;
+                    case 'silty':
+                        soilFactor = 0.9;    // Silty soils have good retention
+                        break;
+                    default:
+                        soilFactor = 1;
+                }
+
+                // Apply adjustment factors and ensure minimum quantities
+                const totalFactor = phFactor * soilFactor;
+                
+                // Minimum quantities (kg/ha) for each fertilizer when needed
+                const MIN_QUANTITIES = {
+                    urea: 5,
+                    dap: 5,
+                    ssp: 5,
+                    mop: 5
+                };
+
+                for (const key in recommendations) {
+                    if (recommendations[key] > 0) {
+                        // Apply adjustment factor
+                        recommendations[key] *= totalFactor;
+                        // Ensure minimum quantity if fertilizer is needed
+                        recommendations[key] = Math.max(
+                            MIN_QUANTITIES[key],
+                            Math.ceil(recommendations[key])
+                        );
+                    }
+                }
+
+                console.log('Final recommendations after adjustments:', recommendations);
+                return recommendations;
+            };
+    
+            const calculateTotalCost = (recommendations, prices) => {
+                let totalCost = 0;
+                for (const fert in recommendations) {
+                    if (recommendations[fert] > 0 && prices[fert]) {
+                        totalCost += recommendations[fert] * prices[fert];
+                    }
+                }
+                return Math.round(totalCost * 100) / 100; // Round to 2 decimal places
+            };
+    
+                    const updateResults = (deficitN, deficitP, deficitK, recommendationsByStage, area, totalCost, crop) => {
+                // Update NPK deficit progress bars
+                document.getElementById('deficitN').textContent = `${(deficitN).toFixed(2)} kg/ha`;
+                document.getElementById('deficitP').textContent = `${(deficitP).toFixed(2)} kg/ha`;
+                document.getElementById('deficitK').textContent = `${(deficitK).toFixed(2)} kg/ha`;
+                document.getElementById('progressN').style.width = `${Math.min(100, (deficitN / (deficitN + deficitP + deficitK)) * 100)}%`;
+                document.getElementById('progressP').style.width = `${Math.min(100, (deficitP / (deficitN + deficitP + deficitK)) * 100)}%`;
+                document.getElementById('progressK').style.width = `${Math.min(100, (deficitK / (deficitN + deficitP + deficitK)) * 100)}%`;
+    
+                let summaryText = `Based on your soil data for <strong>${cropIcons[crop] || ''} ${crop}</strong>, we recommend the following:`;
+                document.getElementById('resultSummary').innerHTML = summaryText;                // Update recommendation tables
+                recommendationDetails.innerHTML = '';
+                for (const stage in recommendationsByStage) {
+                    const stageTable = document.createElement('table');
+                    stageTable.className = 'result-table';
+                    stageTable.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th colspan="3" style="text-align:center;">${stage.charAt(0).toUpperCase() + stage.slice(1)} Stage</th>
+                            </tr>
+                            <tr>
+                                <th>Fertilizer</th>
+                                <th>Per Hectare (kg)</th>
+                                <th>Total (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    `;
+                    const stageTableBody = stageTable.querySelector('tbody');
+                    
+                    const stageRec = recommendationsByStage[stage];
+                    for (const fert in stageRec) {
+                        const perHa = stageRec[fert];
+                        const total = perHa * area;
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${fert.charAt(0).toUpperCase() + fert.slice(1)}</td>
+                            <td>${perHa.toFixed(2)} kg</td>
+                            <td>${total.toFixed(2)} kg</td>
+                        `;
+                        stageTableBody.appendChild(row);
+                    }
+                    recommendationDetails.appendChild(stageTable);
+                    recommendationDetails.appendChild(document.createElement('br'));
+                }
+    
+                // Update total cost
+                // Format the total cost with Rupee symbol and proper formatting
+                totalCostEl.textContent = `₹${totalCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+                
+                // Add a span showing "Indian Rupees" for clarity
+                const currencyNote = document.createElement('span');
+                currencyNote.style.fontSize = '0.8em';
+                currencyNote.style.color = '#666';
+                currencyNote.style.marginLeft = '5px';
+                currencyNote.textContent = '(Indian Rupees)';
+                totalCostEl.appendChild(currencyNote);
+            };
+    
+            const resetForm = () => {
+                fertilizerForm.reset();
+                hideResults();
+                populateDropdowns();
+            };
+            
+            const showToast = (message) => {
+                const toastContainer = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000);
+            };
+
+            // --- Dropdown Population ---
+            function populateDropdowns() {
+                const crops = [...new Set(CROP_DATA.map(d => d.Crop))].sort();
+                cropSelect.innerHTML = '<option value="">Select a crop...</option>';
+                crops.forEach(crop => {
+                    const option = document.createElement('option');
+                    option.value = crop.toLowerCase().replace(" ", "_");
+                    option.textContent = `${cropIcons[crop.toLowerCase().replace(" ", "_")] || '🌱'} ${crop}`;
+                    cropSelect.appendChild(option);
+                });
+                soilTypeSelect.disabled = true;
+                varietySelect.disabled = true;
+            }
+
+            function populateSoilTypeDropdown(selectedCrop) {
+                const soilTypes = [...new Set(CROP_DATA.filter(d => 
+                    d.Crop.toLowerCase().replace(" ", "_") === selectedCrop
+                ).map(d => d.Soil_Type))].sort();
+                soilTypeSelect.innerHTML = '<option value="">Select soil type...</option>';
+                soilTypes.forEach(soil => {
+                    const option = document.createElement('option');
+                    option.value = soil.toLowerCase().replace(" ", "_");
+                    option.textContent = soil;
+                    soilTypeSelect.appendChild(option);
+                });
+                soilTypeSelect.disabled = false;
+            }
+    
+            // --- Event Listeners ---
+            fertilizerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                calculateFertilizer();
+            });
+    
+            resetBtn.addEventListener('click', resetForm);
+            
+            cropSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    populateSoilTypeDropdown(e.target.value);
+                } else {
+                    soilTypeSelect.disabled = true;
+                }
+            });
+
+            // Dark Mode Toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            });
+    
+            // Tooltips
+            document.querySelectorAll('.tooltip-container').forEach(container => {
+                const icon = container.querySelector('.tooltip-icon');
+                const tooltip = container.querySelector('.tooltip-box');
+                if(icon && tooltip) {
+                    icon.addEventListener('mouseenter', () => tooltip.classList.add('show'));
+                    icon.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+                }
+            });
+    
+            // About Panel
+            aboutPanel.addEventListener('click', () => {
+                aboutPanel.classList.toggle('expanded');
+            });
+    
+            // Presets
+            document.getElementById('preset').addEventListener('change', (e) => {
+                const preset = e.target.value;
+                if (preset === 'low_npk') {
+                    document.getElementById('area').value = 10;
+                    document.getElementById('soilN').value = 50;
+                    document.getElementById('soilP').value = 30;
+                    document.getElementById('soilK').value = 80;
+                    document.getElementById('soilType').value = 'sandy';
+                    document.getElementById('soilPh').value = 5.5;
+                } else if (preset === 'high_npk') {
+                    document.getElementById('area').value = 5;
+                    document.getElementById('soilN').value = 150;
+                    document.getElementById('soilP').value = 100;
+                    document.getElementById('soilK').value = 120;
+                    document.getElementById('soilType').value = 'clay_loam';
+                    document.getElementById('soilPh').value = 6.8;
+                } else if (preset === 'acidic_soil') {
+                    document.getElementById('area').value = 2;
+                    document.getElementById('soilN').value = 80;
+                    document.getElementById('soilP').value = 60;
+                    document.getElementById('soilK').value = 90;
+                    document.getElementById('soilType').value = 'loam';
+                    document.getElementById('soilPh').value = 4.5;
+                }
+            });
+            
+            // --- Action Buttons ---
+            copyBtn.addEventListener('click', () => {
+                const recommendationData = {};
+                const tableRows = document.querySelectorAll('#recommendationDetails table');
+                let allRecs = {};
+                tableRows.forEach(table => {
+                    const stage = table.querySelector('th').textContent.replace(' Stage', '');
+                    const stageRecs = {};
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        stageRecs[cells[0].textContent] = {
+                            per_hectare: parseFloat(cells[1].textContent),
+                            total: parseFloat(cells[2].textContent)
+                        };
+                    });
+                    allRecs[stage] = stageRecs;
+                });
+                recommendationData.recommendations_by_stage = allRecs;
+                recommendationData.total_cost = document.getElementById('totalCost').textContent;
+    
+                const jsonString = JSON.stringify(recommendationData, null, 2);
+                navigator.clipboard.writeText(jsonString)
+                    .then(() => {
+                        showToast('📝 Recommendations copied to clipboard!');
+                    })
+                    .catch(err => {
+                        // Fallback for older browsers
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = jsonString;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        showToast('📝 Recommendations copied to clipboard!');
+                    });
+            });
+            
+            printBtn.addEventListener('click', () => {
+                const printContent = document.getElementById('resultsCard').innerHTML;
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                printWindow.document.write('<html><head><title>Fertilizer Recommendation</title>');
+                printWindow.document.write('<style>body{font-family: Poppins, sans-serif;} .section-header{font-size: 1.5rem; color: #16a085;} table{width: 100%; border-collapse: collapse; margin-top: 20px;} th, td{border: 1px solid #ccc; padding: 10px; text-align: left;}</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(printContent);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            });
+
+            populateDropdowns();
+        });
+    </script>
+</body>
+</html>

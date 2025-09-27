@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Community — Government Schemes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styling */
+        :root {
+            --color-primary: #38a169; /* Soft Green */
+            --color-secondary: #e6f6e6; /* Very Light Green/Off-White */
+            --color-text: #1a202c; /* Dark text */
+            --color-bg: #ffffff;
+            --color-shadow: rgba(56, 161, 105, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--color-primary);
+            color: var(--color-bg);
+            padding: 20px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: #277b50;
+            box-shadow: 0 0 0 3px var(--color-shadow);
+        }
+
+        /* Scheme Grid/Cards */
+        #schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .scheme-card {
+            background-color: var(--color-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px var(--color-shadow), 0 4px 6px -4px var(--color-shadow);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-top: 5px solid var(--color-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -3px var(--color-shadow), 0 6px 8px -4px var(--color-shadow);
+        }
+
+        .scheme-card h3 {
+            color: var(--color-primary);
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .scheme-card p {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1; /* Ensures equal card height */
+        }
+
+        .card-footer {
+            margin-top: auto;
+        }
+
+        .official-site-btn {
+            display: inline-block;
+            background-color: var(--color-primary);
+            color: var(--color-bg);
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+            width: 100%; /* Full width button on card */
+        }
+
+        .official-site-btn:hover {
+            background-color: #277b50;
+        }
+
+        /* No results message */
+        #no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #718096;
+            display: none;
+        }
+
+        /* Mobile Adjustments (Ensuring Mobile-Friendliness) */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 10px;
+            }
+            .scheme-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>🌱 Farmer Community — Government Schemes</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search schemes by name (e.g., PM-KISAN)...">
+        </div>
+
+        <!-- Scheme Cards Grid -->
+        <main id="schemes-grid">
+            <div id="no-results">No schemes match your search criteria. Please try a different query.</div>
+            <!-- Scheme cards will be dynamically inserted here by JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        // Data for Government Schemes
+        const schemesData = [
+            {
+                name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+                description: "Provides income support of ₹6,000 per year to all eligible farmer families across the country to meet their financial needs.",
+                link: "https://pmkisan.gov.in"
+            },
+            {
+                name: "PM-KMY (Pradhan Mantri Kisan Maandhan Yojana)",
+                description: "A voluntary and contributory pension scheme for small and marginal farmers, ensuring a minimum fixed pension of ₹3,000 per month upon reaching 60 years of age.",
+                link: "https://maandhan.in"
+            },
+            {
+                name: "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
+                description: "Offers comprehensive insurance coverage and financial support to farmers suffering crop loss/damage arising out of unforeseen events like natural calamities.",
+                link: "https://pmfby.gov.in"
+            },
+            {
+                name: "Kisan Credit Card (KCC) Scheme",
+                description: "Aims at providing adequate and timely credit support from the banking system to the farmers for their agricultural needs, including investment and post-harvest expenses.",
+                link: "https://www.myscheme.gov.in/schemes/kcc"
+            },
+            {
+                name: "Agricultural Infrastructure Fund (AIF)",
+                description: "A medium to long-term debt financing facility for investment in viable projects for post-harvest management infrastructure and community farming assets.",
+                link: "https://agriculture.vikaspedia.in/viewcontent/agriculture/agriculture-infrastructure-fund"
+            },
+            {
+                name: "PM Krishi Sinchai Yojana (PMKSY)",
+                description: "Focuses on providing end-to-end solutions in the irrigation supply chain, covering source creation, distribution, field application, and promoting water-use efficiency ('More Crop Per Drop').",
+                link: "https://pmksy.gov.in"
+            },
+            {
+                name: "e-NAM (National Agriculture Market)",
+                description: "An online trading platform for agricultural commodities, aiming to create a unified national market for agricultural produce and ensure better price discovery for farmers.",
+                link: "https://enam.gov.in"
+            },
+            {
+                name: "Soil Health Card Scheme",
+                description: "Promotes soil testing and provides every farmer with a Soil Health Card (SHC) to address nutrient deficiencies and recommend tailored fertilizer application.",
+                link: "https://soilhealth.dac.gov.in"
+            },
+            {
+                name: "RKVY-RAFTAAR (Rashtriya Krishi Vikas Yojana)",
+                description: "Incentivizes states to increase public investment in agriculture and allied sectors, focusing on entrepreneurship, innovation, and infrastructure development in rural areas.",
+                link: "https://rkvy.nic.in"
+            },
+            {
+                name: "NABARD Schemes",
+                description: "The National Bank for Agriculture and Rural Development provides comprehensive financial assistance and development support for agriculture, cottage industries, and other rural activities.",
+                link: "https://www.nabard.org"
+            }
+        ];
+
+        const schemesGrid = document.getElementById('schemes-grid');
+        const searchInput = document.getElementById('search-input');
+        const noResultsMessage = document.getElementById('no-results');
+
+        // Function to render the scheme cards
+        function renderSchemes(filterText = '') {
+            const normalizedFilter = filterText.toLowerCase().trim();
+            const fragment = document.createDocumentFragment();
+            let visibleCount = 0;
+
+            schemesData.forEach(scheme => {
+                if (scheme.name.toLowerCase().includes(normalizedFilter)) {
+                    const card = document.createElement('div');
+                    card.className = 'scheme-card';
+
+                    card.innerHTML = `
+                        <h3>${scheme.name}</h3>
+                        <p>${scheme.description}</p>
+                        <div class="card-footer">
+                            <a href="${scheme.link}" target="_blank" rel="noopener noreferrer" class="official-site-btn">
+                                Visit Official Site
+                            </a>
+                        </div>
+                    `;
+                    fragment.appendChild(card);
+                    visibleCount++;
+                }
+            });
+
+            // Clear the existing grid content
+            schemesGrid.innerHTML = '';
+            
+            // Append the new content or the no results message
+            if (visibleCount > 0) {
+                schemesGrid.appendChild(fragment);
+                noResultsMessage.style.display = 'none';
+            } else {
+                schemesGrid.appendChild(noResultsMessage);
+                noResultsMessage.style.display = 'block';
+            }
+        }
+
+        // Event listener for real-time filtering
+        searchInput.addEventListener('input', (event) => {
+            renderSchemes(event.target.value);
+        });
+
+        // Initial render on page load
+        window.onload = () => {
+            renderSchemes();
+        };
+
+    </script>
+
+</body>
+</html>

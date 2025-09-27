@@ -1,0 +1,270 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Agri Community</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="center-container">
+        <div class="auth-card">
+            <h2>Login</h2>
+            <form method="post">
+                {% csrf_token %}
+                <label>Username<br><input type="text" name="username" required></label><br>
+                <label>Password<br><input type="password" name="password" required></label><br>
+                <button type="submit">Login</button>
+            </form>
+            <p class="auth-link">Don't have an account? <a href="/register/">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Agri Community</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* --- General & CSS Variables --- */
+        :root {
+            --primary-green: #2A5C3D;
+            --dark-grey: #4A4A4A;
+            --light-grey: #D3D3D3;
+            --background-beige: #FEFBF6;
+            --font-heading: 'Montserrat', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--dark-grey);
+            background-color: var(--background-beige);
+            line-height: 1.6;
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* --- Left Side with Background Image --- */
+        .info-side {
+            flex-basis: 50%;
+            /* IMPORTANT: Replace with the correct path to your image */
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('/static/hi.jpeg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            color: white;
+        }
+
+        .info-content .app-name {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .info-content .slogan {
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        /* --- Right Side with Form --- */
+        .form-side {
+            flex-basis: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* --- Login/Register Tabs --- */
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--light-grey);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-grey);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .tab:hover {
+            color: var(--primary-green);
+        }
+
+        .tab.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        /* --- Form Styling --- */
+        .form-content h2 {
+            font-family: var(--font-heading);
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .form-content .form-intro {
+            margin-bottom: 30px;
+            color: #777;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-grey);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid var(--light-grey);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: var(--font-body);
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 5px rgba(42, 92, 61, 0.2);
+        }
+
+        /* --- Button Styling --- */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            background-color: var(--primary-green);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #224a32;
+        }
+
+        /* --- Link to Register Page --- */
+        .auth-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .auth-link a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* --- Responsive Design for Mobile --- */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .info-side {
+                display: none; /* Hide image panel on mobile to focus on the form */
+             
+            }
+
+            .form-side {
+                flex-basis: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="info-side">
+            
+            <div class="info-content">
+                <h1 class="app-name">Agri Community</h1>
+                <p class="slogan">Connecting Farmers, Cultivating Futures.</p>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="form-wrapper">
+                <div class="tabs">
+                    <span class="tab active">Login</span>
+                    <a href="/register/" class="tab">Register</a>
+                </div>
+
+                <div class="form-content">
+                    <h2>Welcome Back!</h2>
+                    <p class="form-intro">Enter your credentials to access your account.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="username" placeholder="Username" required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn">Login</button>
+                    </form>
+                    
+                    <p class="auth-link">Don't have an account? <a href="/register/">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

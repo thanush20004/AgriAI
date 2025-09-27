@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pest & Disease Detector — Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================================================================
+        README:
+        This is a single-file, production-quality prototype for a Pest & Disease Detector.
+        It's built with vanilla HTML, CSS, and JS to be self-contained and easily deployable.
+
+        Features:
+        - Responsive two-column layout for desktop and mobile.
+        - Drag & drop or file picker for image upload.
+        - High-resolution image preview with zoom functionality.
+        - Mock client-side detection that simulates results with markers.
+        - Interactive markers that display issue details on click.
+        - Dynamic results panel with issue summaries and remedy suggestions.
+        - Export report functionality (using window.print() as a placeholder).
+        - Accessible design with ARIA labels and keyboard navigation.
+        - Minimal JS for a smooth, single-page experience.
+        - ✨ NEW: Integrated Gemini API for an intelligent chatbot and care plan generation. ✨
+
+        Future Integration Points:
+        1. Replace mock detection with a real API call:
+           The `mockDetect()` function is where you'd integrate your machine learning model.
+           Replace the logic inside the `detectImage()` function.
+           ```javascript
+           // Example using fetch for a REST API
+           const response = await fetch('YOUR_ML_API_ENDPOINT', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json', // or 'image/jpeg' depending on your API
+                   // 'Authorization': 'Bearer YOUR_API_KEY' // Secure your keys!
+               },
+               body: JSON.stringify({ imageData: base64ImageString }) // Or a FormData object
+           });
+           const results = await response.json(); // Expected format: { "detections": [{ "label": "...", "severity": "...", "coords": { "x": ..., "y": ... } }] }
+           return results.detections;
+           ```
+           Consider CORS headers and securing API keys if moving to a live environment.
+
+        2. Export report:
+           The `downloadReport()` function currently uses `window.print()`. For a PDF, you could
+           use a library like `jsPDF` or a server-side rendering service.
+           ```javascript
+           // Example with jsPDF
+           // import jsPDF from 'jspdf';
+           // const doc = new jsPDF();
+           // doc.text('Pest & Disease Report', 10, 10);
+           // doc.save('report.pdf');
+           ```
+
+        3. Gemini API Integration:
+           The `askGardener()` and `generateCarePlan()` functions are ready for use.
+           The `API_URL` and `API_KEY` are configured for the Gemini Flash model,
+           allowing for fast text generation. You would typically swap the provided
+           API_KEY with a real one, but for this prototype, leave it as is to work
+           within the Canvas environment.
+
+        4. Image Hosting & Processing:
+           For large-scale applications, you'd typically upload the image to an object storage
+           service (like AWS S3 or Google Cloud Storage) and pass the URL to your ML endpoint
+           instead of the base64 string.
+        ========================================================================================
+        */
+        :root {
+            /* Earthy Color Palette (Refined) */
+            --color-primary: #3c7d3a;
+            --color-primary-light: #52a04f;
+            --color-secondary: #a9c68f;
+            --color-background: #eef3e8;
+            --color-card-bg: #ffffff;
+            --color-text-dark: #2c3e2e;
+            --color-text-light: #7a8c7b;
+            --color-accent: #e88d4c;
+            --color-success: #48a65c;
+            --color-info: #55a8d9;
+            --color-warning: #f7b731;
+            --color-border: #d4e0c8;
+            --color-shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --color-shadow-md: 0 8px 16px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03);
+
+            /* Typography */
+            --font-family-primary: 'Poppins', sans-serif;
+            --font-size-base: 16px;
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+
+            /* UI Elements */
+            --card-radius: 16px;
+            --border-radius: 12px;
+        }
+
+        /* Base & Layout */
+        body {
+            font-family: var(--font-family-primary);
+            color: var(--color-text-dark);
+            background-color: var(--color-background);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: linear-gradient(135deg, #eef3e8 0%, #f7fcf5 100%);
+            transition: background-color 0.5s ease;
+        }
+
+        main {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            padding: var(--spacing-md);
+            gap: var(--spacing-md);
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: var(--spacing-md);
+            flex-grow: 1;
+        }
+
+        .column {
+            background-color: var(--color-card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--color-shadow-md);
+            padding: var(--spacing-md);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .column:hover {
+            box-shadow: var(--color-shadow-lg);
+        }
+
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .right-column {
+            width: 360px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            overflow-y: auto;
+        }
+
+        /* Responsive Layout */
+        @media (min-width: 768px) {
+            main {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            .right-column {
+                width: 100%;
+                order: 1;
+            }
+            .left-column {
+                order: 2;
+            }
+        }
+
+        /* --- Header & Onboarding --- */
+        header {
+            text-align: center;
+            padding-bottom: var(--spacing-sm);
+        }
+
+        h1 {
+            color: var(--color-primary);
+            margin: 0 0 var(--spacing-xs);
+            font-size: 2.5rem;
+        }
+
+        .description {
+            color: var(--color-text-light);
+            margin: 0 0 var(--spacing-sm);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            box-shadow: var(--color-shadow-md);
+        }
+
+        .btn-primary {
+            color: white;
+            background-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-success) 100%);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-secondary);
+            color: var(--color-text-dark);
+            background-image: none;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #8bb36b;
+        }
+
+        .btn-accent {
+            color: white;
+            background-color: var(--color-accent);
+            background-image: linear-gradient(135deg, var(--color-accent) 0%, #ff9550 100%);
+        }
+        
+        .btn-gemini {
+            color: white;
+            background-image: linear-gradient(135deg, #4285F4 0%, #16A085 100%);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--color-shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Upload Area --- */
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--card-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+            width: 100%;
+            height: 300px;
+            box-sizing: border-box;
+        }
+
+        .upload-area:hover {
+            background-color: #f7fbf3;
+            border-color: var(--color-primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .upload-area p {
+            color: var(--color-text-light);
+            margin: var(--spacing-xs) 0;
+        }
+
+        /* --- Image Preview --- */
+        .image-preview-card {
+            display: none;
+            position: relative;
+            width: 100%;
+            border-radius: var(--card-radius);
+            box-shadow: var(--color-shadow-lg);
+            overflow: hidden;
+            margin-top: var(--spacing-md);
+            flex-grow: 1;
+            min-height: 400px;
+        }
+        
+        .preview-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            padding: var(--spacing-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: crosshair;
+            transition: transform 0.5s ease;
+        }
+
+        #preview-image.zoomed {
+            cursor: zoom-out;
+        }
+
+        /* Markers */
+        .marker {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            transition: transform 0.2s;
+        }
+
+        .marker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-accent);
+            border-radius: 50%;
+            opacity: 0.5;
+            transform: translate(-50%, -50%);
+            animation: pulse 1.5s infinite;
+        }
+
+        .marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+
+        .marker-popup {
+            position: absolute;
+            background: white;
+            padding: var(--spacing-xs);
+            border-radius: var(--border-radius);
+            box-shadow: var(--color-shadow-md);
+            z-index: 10;
+            width: 220px;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            transition: opacity 0.3s;
+        }
+
+        .marker-popup.show {
+            display: block;
+        }
+
+        .marker-popup h4 {
+            margin: 0 0 5px;
+            font-size: 1rem;
+            color: var(--color-primary);
+        }
+
+        /* --- Right Column - Results Panel --- */
+        .results-panel {
+            display: none;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--color-text-light);
+            background-color: var(--color-card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--color-shadow-md);
+        }
+        
+        .empty-state h3 {
+            color: var(--color-primary);
+        }
+
+        .result-card {
+            background-color: var(--color-card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--color-shadow-md);
+            padding: var(--spacing-sm);
+            border-left: 6px solid transparent;
+            transition: transform 0.2s, border-left-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .result-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--color-accent);
+            box-shadow: var(--color-shadow-lg);
+        }
+
+        .result-card h3 {
+            margin: 0 0 var(--spacing-xs);
+            color: var(--color-primary);
+        }
+
+        .result-card p {
+            margin: 0 0 var(--spacing-xs);
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+        }
+
+        .result-card .confidence {
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .remedies-section {
+            display: none;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--color-border);
+            margin-top: var(--spacing-sm);
+        }
+
+        .remedies-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .remedies-section li {
+            font-size: 0.9rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .remedies-section li::before {
+            content: "•";
+            color: var(--color-primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--color-text-light);
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid var(--color-border);
+            border-top: 4px solid var(--color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-sm);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .skeleton-card {
+            padding: var(--spacing-sm);
+            border-radius: var(--card-radius);
+            background-color: #d8e6cb;
+            animation: pulse-bg 1.5s infinite;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .skeleton-card-line {
+            height: 12px;
+            background-color: #b7c7a3;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-card-line:nth-child(1) { width: 80%; }
+        .skeleton-card-line:nth-child(2) { width: 60%; }
+        .skeleton-card-line:nth-child(3) { width: 90%; }
+
+        @keyframes pulse-bg {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        /* New Gemini Chatbot Styles */
+        .chat-container {
+            display: none;
+            background-color: #f8fcf5;
+            border-radius: var(--card-radius);
+            padding: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+            box-shadow: var(--color-shadow-md);
+        }
+
+        .chat-history {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+            background-color: var(--color-background);
+            border-radius: var(--border-radius);
+        }
+
+        .chat-message {
+            padding: 10px 14px;
+            border-radius: 20px;
+            max-width: 85%;
+            word-wrap: break-word;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .chat-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .user-message {
+            background-color: var(--color-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .model-message {
+            background-color: var(--color-secondary);
+            color: var(--color-text-dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            padding: var(--spacing-sm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+
+        /* Hidden elements */
+        #file-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <header>
+            <h1 aria-label="Pest and Disease Detector Demo">Pest & Disease Detector</h1>
+            <p class="description">Upload an image of your plant to instantly detect pests, diseases, or nutrient deficiencies and get actionable remedies.</p>
+        </header>
+        
+        <div class="container">
+            <!-- Left Column: Image Upload & Preview -->
+            <div class="column left-column">
+                <div id="upload-area" class="upload-area" role="button" tabindex="0" aria-label="Upload an image. Drag and drop or click to select a file.">
+                    <p style="font-size: 3rem;">🌱</p>
+                    <p><strong>Drag & Drop</strong> your plant image here</p>
+                    <p>or</p>
+                    <button id="upload-btn" class="btn btn-primary" aria-label="Select file from computer">Choose a File</button>
+                    <input type="file" id="file-input" accept="image/*" aria-hidden="true">
+                </div>
+
+                <div id="image-preview-card" class="image-preview-card" style="display: none;">
+                    <div class="preview-header">
+                        <button id="zoom-toggle-btn" class="btn btn-secondary" aria-label="Toggle image zoom">Zoom In</button>
+                        <button id="reset-btn" class="btn btn-secondary" aria-label="Reset image and markers">Reset</button>
+                        <button id="detect-btn" class="btn btn-accent" aria-label="Detect pests and diseases in the image">Detect</button>
+                    </div>
+                    <div class="image-container">
+                        <img id="preview-image" src="#" alt="Preview of uploaded plant image" aria-live="polite">
+                    </div>
+                </div>
+                
+                <!-- NEW: Gemini Chatbot UI -->
+                <div id="chatbot-panel" class="chat-container">
+                    <h4>✨ Ask a Gardener ✨</h4>
+                    <div id="chat-history" class="chat-history"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="e.g., How do I get rid of aphids naturally?">
+                        <button id="send-btn" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Detection Results & Remedies -->
+            <div class="column right-column">
+                <div id="results-panel" class="results-panel">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
+                
+                <div id="empty-state" class="empty-state">
+                    <h3>Waiting for an image...</h3>
+                    <p>Upload a clear photo of your plant's leaves to get started.</p>
+                </div>
+
+                <div id="loading-state" class="loading-state">
+                    <div class="spinner" aria-label="Processing image"></div>
+                    <p>Analyzing your plant...</p>
+                    <div class="skeleton-card">
+                        <div class="skeleton-card-line"></div>
+                        <div class="skeleton-card-line"></div>
+                        <div class="skeleton-card-line"></div>
+                    </div>
+                    <div class="skeleton-card" style="margin-top: 10px;">
+                        <div class="skeleton-card-line"></div>
+                        <div class="skeleton-card-line"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const imagePreviewCard = document.getElementById('image-preview-card');
+        const previewImage = document.getElementById('preview-image');
+        const zoomToggleBtn = document.getElementById('zoom-toggle-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const detectBtn = document.getElementById('detect-btn');
+        const resultsPanel = document.getElementById('results-panel');
+        const emptyState = document.getElementById('empty-state');
+        const loadingState = document.getElementById('loading-state');
+        const chatbotPanel = document.getElementById('chatbot-panel');
+        const chatHistory = document.getElementById('chat-history');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        let currentMarkers = [];
+        let zoomState = false;
+        let chatHistoryData = [];
+
+        // --- Gemini API Configuration ---
+        const API_KEY = "AIzaSyAIQ8ova8qqe06lZ6A2ZbodyvopQK4Gv2Y";
+        const API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
+
+        // Add retry logic helper
+        const fetchWithRetry = async (url, options, retries = 3) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                }
+            }
+        };
+
+        // --- Demo Data: Updated for randomness ---
+        const DEMO_DATA = {
+            "Powdery Mildew": {
+                label: 'Powdery Mildew',
+                confidence: '92%',
+                severity: 'Medium',
+                description: 'A fungal disease that appears as a white, powdery coating on the surface of leaves, stems, and flowers. It can stunt growth and cause leaves to yellow or curl.',
+                remedies: [
+                    'Organic: Remove and destroy infected leaves. Use a baking soda or neem oil spray. Improve air circulation.',
+                    'Chemical: Apply a sulfur-based fungicide or a systemic fungicide with myclobutanil.',
+                    'Prevention: Choose resistant plant varieties. Avoid overhead watering and plant in well-draining soil.'
+                ],
+                coords: { x: 0.35, y: 0.45 }
+            },
+            "Bacterial Leaf Blight": {
+                label: 'Bacterial Leaf Blight',
+                confidence: '85%',
+                severity: 'High',
+                description: 'Causes water-soaked spots on leaves that expand into large brown, dead areas. The bacteria thrive in warm, humid conditions and can spread rapidly.',
+                remedies: [
+                    'Organic: Remove and discard all infected plant parts immediately. Avoid watering from overhead.',
+                    'Chemical: Use a copper-based bactericide. Follow a strict application schedule to control spread.',
+                    'Prevention: Practice crop rotation. Plant in well-drained soil. Sanitize tools regularly.'
+                ],
+                coords: { x: 0.65, y: 0.70 }
+            },
+            "Mosaic Virus": {
+                label: 'Mosaic Virus',
+                confidence: '98%',
+                severity: 'High',
+                description: 'A viral disease characterized by a mosaic-like pattern of light and dark green on leaves. It can cause stunted growth, leaf distortion, and reduced yield.',
+                remedies: [
+                    'Organic: There is no cure. Remove and destroy all infected plants immediately to prevent spread.',
+                    'Chemical: There are no chemical treatments for viruses. Focus on vector control.',
+                    'Prevention: Control aphids and other sap-sucking insects that spread the virus. Use certified, disease-free seeds and seedlings.'
+                ],
+                coords: { x: 0.20, y: 0.80 }
+            },
+            "Aphid Infestation": {
+                label: 'Aphid Infestation',
+                confidence: '95%',
+                severity: 'High',
+                description: 'Small, soft-bodied insects clustered on new growth. They feed on plant sap, causing leaves to curl and yellow. May secrete a sticky substance called honeydew.',
+                remedies: [
+                    'Organic: Use a strong stream of water to dislodge them. Apply insecticidal soap or neem oil every 5-7 days.',
+                    'Chemical: Use a systemic insecticide with active ingredients like acetamiprid or imidacloprid for severe cases.',
+                    'Prevention: Introduce beneficial insects like ladybugs or lacewings. Check plants regularly, especially new growth.'
+                ],
+                coords: { x: 0.40, y: 0.40 }
+            },
+            "Nutrient Deficiency (Iron)": {
+                label: 'Nutrient Deficiency (Iron)',
+                confidence: '70%',
+                severity: 'Low',
+                description: 'Yellowing of new leaves while veins remain green (interveinal chlorosis). Common in alkaline soils or due to poor drainage.',
+                remedies: [
+                    'Organic: Add organic compost or chelated iron to the soil. Lower soil pH with sulfur or peat moss.',
+                    'Chemical: Apply a liquid fertilizer rich in chelated iron directly to the leaves or soil.',
+                    'Prevention: Maintain a balanced soil pH (6.0-6.5 for most plants) and ensure good drainage.'
+                ],
+                coords: { x: 0.85, y: 0.15 }
+            }
+        };
+
+        // --- Core Functions ---
+
+        /**
+         * @description Handles the file upload via drag & drop or file picker.
+         * @param {File} file The image file object.
+         */
+        const handleUpload = (file) => {
+            if (!file || !file.type.startsWith('image/')) {
+                alert('Please upload a valid image file.');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert('File is too large. Please upload an image smaller than 5MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageUrl = e.target.result;
+                localStorage.setItem('lastUploadedImage', imageUrl);
+                renderPreview(imageUrl);
+                hideAllPanels();
+                imagePreviewCard.style.display = 'flex';
+                detectBtn.style.display = 'inline-block';
+                // Reset chat when a new image is uploaded
+                chatHistoryData = [];
+                chatHistory.innerHTML = '';
+                chatbotPanel.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        /**
+         * @description Renders the uploaded image in the preview card.
+         * @param {string} imageUrl The Base64 string of the image.
+         */
+        const renderPreview = (imageUrl) => {
+            previewImage.src = imageUrl;
+            previewImage.alt = 'Uploaded image for detection';
+            resetMarkers();
+            resetZoom();
+        };
+        
+        /**
+         * @description Resets the preview and UI to the initial state.
+         */
+        const resetUI = () => {
+            resetMarkers();
+            resetZoom();
+            imagePreviewCard.style.display = 'none';
+            uploadArea.style.display = 'flex';
+            hideAllPanels();
+            emptyState.style.display = 'block';
+            localStorage.removeItem('lastUploadedImage');
+            // Reset chat
+            chatHistoryData = [];
+            chatHistory.innerHTML = '';
+        };
+
+        /**
+         * @description Hides all dynamic panels (results, empty, loading).
+         */
+        const hideAllPanels = () => {
+            resultsPanel.style.display = 'none';
+            emptyState.style.display = 'none';
+            loadingState.style.display = 'none';
+        }
+
+        // --- Mock Detection Function ---
+
+        /**
+         * @description Mocks a client-side detection routine by randomly selecting a disease.
+         * @returns {Promise<Array<Object>>} A promise that resolves with an array of detection results.
+         */
+        const mockDetect = () => {
+            return new Promise(resolve => {
+                // Simulate network latency
+                setTimeout(() => {
+                    const allIssues = Object.keys(DEMO_DATA);
+                    // Shuffle the array of issue keys to ensure randomness
+                    for (let i = allIssues.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [allIssues[i], allIssues[j]] = [allIssues[j], allIssues[i]];
+                    }
+                    // Select the first 3 issues (or fewer if less than 3 are available)
+                    const selectedIssues = allIssues.slice(0, 3);
+                    const results = selectedIssues.map(key => DEMO_DATA[key]);
+                    resolve(results);
+                }, 2000);
+            });
+        };
+
+        /**
+         * @description Orchestrates the detection process.
+         */
+        const detectImage = async () => {
+            hideAllPanels();
+            loadingState.style.display = 'block';
+            
+            try {
+                // --- INTEGRATION POINT: REPLACE THIS LINE WITH YOUR REAL API CALL ---
+                // const results = await callYourMLModelAPI();
+                const API_KEY = "AIzaSyAIQ8ova8qqe06lZ6A2ZbodyvopQK4Gv2Y"; // Leave as empty string for Canvas
+                const results = await mockDetect();
+                
+                hideAllPanels();
+                if (results.length > 0) {
+                    resultsPanel.style.display = 'flex';
+                    renderResults(results);
+                    renderMarkers(results);
+                    // Show chatbot after successful detection
+                    chatbotPanel.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'block';
+                    emptyState.innerHTML = '<h3>No issues detected! 🎉</h3><p>Your plant looks healthy.</p>';
+                }
+
+            } catch (error) {
+                console.error("Detection failed:", error);
+                hideAllPanels();
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = '<h3>Detection failed...</h3><p>Something went wrong. Please try again.</p>';
+            }
+        };
+
+        /**
+         * @description Renders detection results in the right-hand panel.
+         * @param {Array<Object>} results The array of detection results.
+         */
+        const renderResults = (results) => {
+            resultsPanel.innerHTML = '';
+            results.forEach((issue, index) => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `${issue.label}. Confidence: ${issue.confidence}`);
+                card.innerHTML = `
+                    <h3>${issue.label}</h3>
+                    <p>Confidence: <span class="confidence">${issue.confidence}</span></p>
+                    <p>${issue.description}</p>
+                    <div class="remedies-section" id="remedies-${index}">
+                        <h4>Recommended Remedies</h4>
+                        <ul>
+                            ${issue.remedies.map(r => `<li>${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    const remedySection = card.querySelector('.remedies-section');
+                    remedySection.style.display = remedySection.style.display === 'block' ? 'none' : 'block';
+                    const marker = document.querySelector(`.marker[data-index='${index}']`);
+                    if (marker) {
+                        marker.focus();
+                    }
+                });
+                resultsPanel.appendChild(card);
+            });
+
+            // Add new Gemini-powered buttons and export button
+            const btnGroup = document.createElement('div');
+            btnGroup.style.display = 'flex';
+            btnGroup.style.flexDirection = 'column';
+            btnGroup.style.gap = '8px';
+            btnGroup.style.marginTop = 'var(--spacing-sm)';
+
+            const carePlanBtn = document.createElement('button');
+            carePlanBtn.id = 'care-plan-btn';
+            carePlanBtn.className = 'btn btn-gemini';
+            carePlanBtn.innerHTML = '✨ Generate a Plant Care Plan ✨';
+            carePlanBtn.addEventListener('click', () => generateCarePlan(results));
+            btnGroup.appendChild(carePlanBtn);
+            
+            const downloadBtn = document.createElement('button');
+            downloadBtn.id = 'download-btn';
+            downloadBtn.className = 'btn btn-primary';
+            downloadBtn.textContent = 'Export Report (PDF)';
+            downloadBtn.addEventListener('click', downloadReport);
+            btnGroup.appendChild(downloadBtn);
+
+            resultsPanel.appendChild(btnGroup);
+        };
+
+        /**
+         * @description Renders interactive markers on the preview image.
+         * @param {Array<Object>} results The array of detection results.
+         */
+        const renderMarkers = (results) => {
+            resetMarkers();
+            const imageContainer = previewImage.parentElement;
+            
+            results.forEach((issue, index) => {
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.setAttribute('data-index', index);
+                marker.setAttribute('tabindex', '0');
+                marker.setAttribute('aria-label', `Marker for ${issue.label}. Click to see details.`);
+
+                // Calculate pixel coordinates
+                const xPos = issue.coords.x * previewImage.offsetWidth;
+                const yPos = issue.coords.y * previewImage.offsetHeight;
+                
+                marker.style.left = `${xPos}px`;
+                marker.style.top = `${yPos}px`;
+                
+                // Popover/Tooltip
+                const popup = document.createElement('div');
+                popup.className = 'marker-popup';
+                popup.innerHTML = `
+                    <h4>${issue.label}</h4>
+                    <p>Severity: <strong>${issue.severity}</strong></p>
+                    <button class="btn btn-primary" onclick="window.scrollTo(0, document.querySelector('.result-card:nth-of-type(${index + 1})').offsetTop)">Show Remedy</button>
+                `;
+                marker.appendChild(popup);
+                
+                marker.addEventListener('click', () => {
+                    // Hide all other popups
+                    document.querySelectorAll('.marker-popup').forEach(p => p.classList.remove('show'));
+                    popup.classList.add('show');
+                });
+                
+                marker.addEventListener('mouseleave', () => {
+                    popup.classList.remove('show');
+                });
+
+                imageContainer.appendChild(marker);
+                currentMarkers.push(marker);
+            });
+        };
+
+        /**
+         * @description Removes all markers from the preview image.
+         */
+        const resetMarkers = () => {
+            currentMarkers.forEach(marker => marker.remove());
+            currentMarkers = [];
+        };
+
+        /**
+         * @description Handles image zooming.
+         */
+        const toggleZoom = () => {
+            zoomState = !zoomState;
+            if (zoomState) {
+                previewImage.style.transform = 'scale(2.5)';
+                previewImage.classList.add('zoomed');
+                zoomToggleBtn.textContent = 'Zoom Out';
+            } else {
+                resetZoom();
+            }
+        };
+
+        /**
+         * @description Resets the image zoom.
+         */
+        const resetZoom = () => {
+            zoomState = false;
+            previewImage.style.transform = 'scale(1)';
+            previewImage.classList.remove('zoomed');
+            zoomToggleBtn.textContent = 'Zoom In';
+            previewImage.style.transformOrigin = 'center center';
+        };
+
+        // --- Event Listeners ---
+        
+        // Drag & Drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--color-primary)';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--color-border)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--color-border)';
+            const file = e.dataTransfer.files[0];
+            handleUpload(file);
+        });
+
+        // File Picker
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleUpload(file);
+        });
+        
+        // Accessibility for upload area
+        uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                fileInput.click();
+            }
+        });
+
+        // Image Preview Actions
+        detectBtn.addEventListener('click', detectImage);
+        resetBtn.addEventListener('click', resetUI);
+        zoomToggleBtn.addEventListener('click', toggleZoom);
+        
+        previewImage.addEventListener('mousemove', (e) => {
+            if (zoomState) {
+                const rect = previewImage.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width * 100;
+                const y = (e.clientY - rect.top) / rect.height * 100;
+                previewImage.style.transformOrigin = `${x}% ${y}%`;
+            }
+        });
+
+        /**
+         * @description Handles the "Export Report" functionality.
+         * Currently uses window.print() as a placeholder.
+         */
+        const downloadReport = () => {
+            // Placeholder for PDF generation
+            alert('A printable report would be generated here. We will open a print dialog for demo purposes.');
+            window.print();
+        };
+
+        // --- NEW: Gemini API Functions ---
+        
+        /**
+         * @description Handles the chat input and calls the Gemini API.
+         * @param {string} userMessage The user's query.
+         */
+        const askGardener = async (userMessage) => {
+            if (!userMessage.trim()) return;
+
+            // Add user message to UI
+            addMessageToChat(userMessage, 'user');
+            chatInput.value = '';
+            
+            // Add a loading message
+            const loadingMsg = addMessageToChat('Thinking...', 'model');
+            
+            // Build the chat history for context
+            const contents = chatHistoryData.map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.message }]
+            }));
+            contents.push({ role: 'user', parts: [{ text: userMessage }] });
+
+            const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: LLM_SYSTEM_PROMPT }] }
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const modelResponse = result.candidates[0].content.parts[0].text;
+                
+                // Update loading message with response
+                loadingMsg.textContent = modelResponse;
+
+                // Add to chat history data
+                chatHistoryData.push({ role: 'user', message: userMessage });
+                chatHistoryData.push({ role: 'model', message: modelResponse });
+
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                loadingMsg.textContent = "I'm sorry, I couldn't connect to the gardener. Please try again later.";
+            }
+        };
+        
+        /**
+         * @description Generates a comprehensive plant care plan using Gemini.
+         * @param {Array<Object>} detectedIssues The issues detected in the image.
+         */
+        const generateCarePlan = async (detectedIssues) => {
+            const issuesString = detectedIssues.map(issue => 
+                `${issue.label} (Severity: ${issue.severity})`
+            ).join(', ');
+            
+            const prompt = `Create a detailed plant care plan for a plant with the following issues: ${issuesString}`;
+
+            // Disable buttons and show loading state
+            const carePlanBtn = document.getElementById('care-plan-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            carePlanBtn.disabled = true;
+            downloadBtn.disabled = true;
+            
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'loading-state';
+            loadingMsg.innerHTML = '<div class="spinner"></div><p>Generating your personalized care plan...</p>';
+            resultsPanel.appendChild(loadingMsg);
+            
+            try {
+                const response = await fetchWithRetry(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024,
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    throw new Error('Invalid API response format');
+                }
+
+                const carePlanText = result.candidates[0].content.parts[0].text;
+                
+                // Create formatted care plan card
+                const carePlanCard = document.createElement('div');
+                carePlanCard.className = 'result-card';
+                carePlanCard.innerHTML = `
+                    <h3>✨ Your Personalized Plant Care Plan ✨</h3>
+                    <div style="white-space: pre-line; font-family: inherit; padding: 16px;">
+                        ${carePlanText.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                
+                // Remove existing care plan if present
+                const existingCarePlan = resultsPanel.querySelector('.result-card:last-child');
+                if (existingCarePlan?.querySelector('h3')?.textContent.includes('Care Plan')) {
+                    existingCarePlan.remove();
+                }
+                
+                resultsPanel.appendChild(carePlanCard);
+                carePlanCard.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error("Error generating care plan:", error);
+                const errorCard = document.createElement('div');
+                errorCard.className = 'result-card';
+                errorCard.innerHTML = `
+                    <h3>⚠️ Care Plan Generation Error</h3>
+                    <p>We couldn't generate your care plan at this moment. Please try again.</p>
+                    <p>If this persists, check your internet connection or try refreshing the page.</p>
+                `;
+                resultsPanel.appendChild(errorCard);
+            } finally {
+                carePlanBtn.disabled = false;
+                downloadBtn.disabled = false;
+                loadingMsg.remove();
+            }
+        };
+
+        /**
+         * @description Appends a message to the chat history UI.
+         * @param {string} message The message to display.
+         * @param {string} sender 'user' or 'model'.
+         * @returns {HTMLElement} The created message element.
+         */
+        const addMessageToChat = (message, sender) => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${sender}-message`;
+            msgDiv.textContent = message;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to bottom
+            return msgDiv;
+        };
+
+        // Chat Event Listeners
+        sendBtn.addEventListener('click', () => askGardener(chatInput.value));
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                askGardener(chatInput.value);
+            }
+        });
+
+        // --- Initial Load Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const lastImage = localStorage.getItem('lastUploadedImage');
+            if (lastImage) {
+                renderPreview(lastImage);
+                hideAllPanels();
+                imagePreviewCard.style.display = 'flex';
+                detectBtn.style.display = 'inline-block';
+                emptyState.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>

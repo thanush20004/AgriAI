@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenHarvest - Agricultural Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'earth-brown': '#8B4513',
+                        'forest-green': '#228B22',
+                        'sage-green': '#9CAF88',
+                        'harvest-yellow': '#F4D03F',
+                        'soil-brown': '#A0522D'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #228B22 0%, #9CAF88 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e7b1e, #2eb82e);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 139, 34, 0.3);
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .newsletter-form {
+            transition: all 0.3s ease;
+        }
+        
+        .newsletter-form:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(34, 139, 34, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-forest-green">🌾 GreenHarvest</div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#" class="text-gray-700 hover:text-forest-green px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="#" class="text-gray-700 hover:text-forest-green px-3 py-2 text-sm font-medium transition-colors">Products</a>
+                        <a href="#" class="text-gray-700 hover:text-forest-green px-3 py-2 text-sm font-medium transition-colors">Farmers</a>
+                        <a href="#" class="text-gray-700 hover:text-forest-green px-3 py-2 text-sm font-medium transition-colors">About</a>
+                        <button class="btn-primary text-white px-6 py-2 rounded-full text-sm font-medium">Join Now</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-gray-700 hover:text-forest-green">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center animate-fade-in-up">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    Fresh from Farm to Table
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-green-100 max-w-3xl mx-auto">
+                    Connect directly with local farmers and suppliers. Discover fresh, sustainable produce and agricultural products in your area.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="btn-primary text-white px-8 py-4 rounded-full text-lg font-semibold">
+                        🛒 Shop Fresh Produce
+                    </button>
+                    <button class="bg-white text-forest-green px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
+                        🚜 Become a Seller
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose GreenHarvest?</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Supporting sustainable agriculture and connecting communities through fresh, local produce</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center card-hover bg-gray-50 p-8 rounded-2xl">
+                    <div class="feature-icon text-6xl mb-4">🌱</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">100% Organic</h3>
+                    <p class="text-gray-600">All our products are certified organic, grown without harmful pesticides or chemicals.</p>
+                </div>
+                
+                <div class="text-center card-hover bg-gray-50 p-8 rounded-2xl">
+                    <div class="feature-icon text-6xl mb-4">🚚</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Farm Fresh Delivery</h3>
+                    <p class="text-gray-600">Direct from farm to your doorstep within 24 hours of harvest for maximum freshness.</p>
+                </div>
+                
+                <div class="text-center card-hover bg-gray-50 p-8 rounded-2xl">
+                    <div class="feature-icon text-6xl mb-4">🤝</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Support Local</h3>
+                    <p class="text-gray-600">Every purchase directly supports local farmers and sustainable farming practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Categories -->
+    <section class="py-20 bg-sage-green bg-opacity-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Fresh Categories</h2>
+                <p class="text-xl text-gray-600">Explore our wide range of fresh, local agricultural products</p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card-hover bg-white rounded-2xl overflow-hidden shadow-lg">
+                    <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                        <span class="text-6xl">🥬</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Fresh Vegetables</h3>
+                        <p class="text-gray-600 mb-4">Crisp lettuce, tomatoes, carrots and more</p>
+                        <button class="text-forest-green font-semibold hover:text-green-700 transition-colors">Shop Now →</button>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white rounded-2xl overflow-hidden shadow-lg">
+                    <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                        <span class="text-6xl">🍎</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Seasonal Fruits</h3>
+                        <p class="text-gray-600 mb-4">Apples, berries, citrus and seasonal picks</p>
+                        <button class="text-forest-green font-semibold hover:text-green-700 transition-colors">Shop Now →</button>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white rounded-2xl overflow-hidden shadow-lg">
+                    <div class="h-48 bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center">
+                        <span class="text-6xl">🌾</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Grains & Seeds</h3>
+                        <p class="text-gray-600 mb-4">Wheat, quinoa, chia seeds and more</p>
+                        <button class="text-forest-green font-semibold hover:text-green-700 transition-colors">Shop Now →</button>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-white rounded-2xl overflow-hidden shadow-lg">
+                    <div class="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                        <span class="text-6xl">🌿</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Fresh Herbs</h3>
+                        <p class="text-gray-600 mb-4">Basil, rosemary, thyme and garden herbs</p>
+                        <button class="text-forest-green font-semibold hover:text-green-700 transition-colors">Shop Now →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Signup -->
+    <section class="py-20 bg-earth-brown text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Stay Connected with Fresh Updates</h2>
+            <p class="text-xl mb-8 text-orange-100">Get weekly updates on seasonal produce, farming tips, and exclusive offers from local farmers</p>
+            
+            <form class="newsletter-form max-w-md mx-auto bg-white rounded-full p-2 flex" onsubmit="handleNewsletterSignup(event)">
+                <input 
+                    type="email" 
+                    placeholder="Enter your email address" 
+                    class="flex-1 px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-harvest-yellow"
+                    required
+                >
+                <button 
+                    type="submit" 
+                    class="bg-forest-green text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700 transition-colors"
+                >
+                    Subscribe
+                </button>
+            </form>
+            
+            <div id="newsletter-message" class="mt-4 text-harvest-yellow font-semibold hidden"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold text-forest-green mb-4">🌾 GreenHarvest</div>
+                    <p class="text-gray-400 mb-4">Connecting communities through sustainable agriculture and fresh, local produce.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">📘</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">📷</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">🐦</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">For Buyers</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Browse Products</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Local Farmers</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Delivery Info</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Seasonal Guide</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">For Farmers</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Sell Your Produce</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Farmer Resources</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Support Center</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Sustainability</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 GreenHarvest. All rights reserved. Supporting sustainable agriculture worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function handleNewsletterSignup(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            const messageDiv = document.getElementById('newsletter-message');
+            
+            // Simulate signup process
+            messageDiv.textContent = 'Thank you for subscribing! Welcome to the GreenHarvest community! 🌱';
+            messageDiv.classList.remove('hidden');
+            
+            // Reset form
+            event.target.reset();
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.card-hover, .feature-icon').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9858cc1a67c9b22e',t:'MTc1ODk1MzAwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

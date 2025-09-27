@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Crop Advisory System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            background-image: linear-gradient(to bottom, #E8F5E9, #C8E6C9);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            animation: fadeIn 1s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #1A531B;
+            font-weight: 700;
+        }
+
+        .card {
+            background-color: #FAFFF8;
+            border-radius: 18px;
+            padding: 2rem;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border: 1px solid #E0F2F1;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(to right, #4CAF50, #66BB6A);
+            color: white;
+            padding: 0.85rem 1.8rem;
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .result-card {
+            background: linear-gradient(to right, #E8F5E9, #F0F9F1);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 2px solid #81C784;
+            animation: slideIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .details-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .detail-section-card {
+            background-color: #F8F9FA;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid #E0E0E0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .grid-cols-2, .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center p-8">
+
+    <div class="container mx-auto p-10 rounded-3xl shadow-xl flex flex-col gap-8">
+        <header class="text-center">
+            <h1 class="text-4xl font-bold text-green-800 flex items-center justify-center gap-4 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 010 5.292m0 0a4 4 0 000 5.292m0 0a4 4 0 010 5.292M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-green-800">Crop Advisor</span>
+            </h1>
+            <p class="text-gray-600 text-lg">Your personalized guide to successful farming.</p>
+        </header>
+
+        <main class="flex flex-col gap-6">
+            <form id="advisory-form" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="soil-type" class="block text-sm font-medium text-gray-700 mb-1">Soil Type</label>
+                        <select id="soil-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out bg-white" required>
+                            <option value="">Select soil type...</option>
+                            <option value="loamy">Loamy</option>
+                            <option value="sandy">Sandy</option>
+                            <option value="clay">Clay</option>
+                            <option value="silty">Silty</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="season" class="block text-sm font-medium text-gray-700 mb-1">Season</label>
+                        <select id="season" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out bg-white" required>
+                            <option value="">Select season...</option>
+                            <option value="rabi">Rabi (Winter)</option>
+                            <option value="kharif">Kharif (Monsoon)</option>
+                            <option value="summer">Summer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="temperature" class="block text-sm font-medium text-gray-700 mb-1">Average Temperature (°C)</label>
+                        <input type="number" id="temperature" placeholder="e.g., 25" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out bg-white" required>
+                    </div>
+
+                    <div>
+                        <label for="rainfall" class="block text-sm font-medium text-gray-700 mb-1">Annual Rainfall (mm)</label>
+                        <input type="number" id="rainfall" placeholder="e.g., 800" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-300 ease-in-out bg-white" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg px-5 py-3 text-center transition duration-300 ease-in-out shadow-lg">
+                    Get Crop Suggestions
+                </button>
+            </form>
+
+            <div id="results" class="hidden">
+                <h2 class="text-2xl font-semibold text-green-700 mb-4">Recommended Crops:</h2>
+                <div id="crop-suggestions" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Crop cards will be dynamically inserted here -->
+                </div>
+                <div id="no-results-message" class="hidden text-center mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                    <p class="font-medium">No crops found for the given conditions. Try adjusting your inputs!</p>
+                </div>
+            </div>
+            
+            <div id="details-section" class="hidden details-section">
+                <button id="back-button" class="flex items-center text-green-600 hover:text-green-800 transition-colors mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Suggestions
+                </button>
+                <div id="crop-detail-content" class="bg-white p-8 rounded-xl shadow-lg">
+                    <!-- Detailed crop info will be dynamically inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('advisory-form');
+            const resultsSection = document.getElementById('results');
+            const suggestionsContainer = document.getElementById('crop-suggestions');
+            const noResultsMessage = document.getElementById('no-results-message');
+            const detailsSection = document.getElementById('details-section');
+            const backButton = document.getElementById('back-button');
+            const cropDetailContent = document.getElementById('crop-detail-content');
+
+            const cropData = [
+                {"crop":"Wheat","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":25,"min_rain":300,"max_rain":800},
+                {"crop":"Rice","soil":["Clay"],"season":"Kharif","min_temp":20,"max_temp":35,"min_rain":1000,"max_rain":2000},
+                {"crop":"Maize","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":18,"max_temp":27,"min_rain":500,"max_rain":1200},
+                {"crop":"Groundnut","soil":["Sandy"],"season":"Kharif","min_temp":25,"max_temp":35,"min_rain":500,"max_rain":1200},
+                {"crop":"Barley","soil":["Loamy","Clay"],"season":"Rabi","min_temp":12,"max_temp":24,"min_rain":250,"max_rain":700},
+                {"crop":"Sugarcane","soil":["Loamy","Clay"],"season":"Year-round","min_temp":20,"max_temp":35,"min_rain":1500,"max_rain":2500},
+                {"crop":"Soybean","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":20,"max_temp":30,"min_rain":500,"max_rain":1000},
+                {"crop":"Cotton","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":25,"max_temp":35,"min_rain":500,"max_rain":1200},
+                {"crop":"Tomato","soil":["Loamy"],"season":"Year-round","min_temp":18,"max_temp":27,"min_rain":300,"max_rain":900},
+                {"crop":"Potato","soil":["Sandy","Loamy"],"season":"Rabi","min_temp":15,"max_temp":22,"min_rain":300,"max_rain":800},
+                {"crop":"Onion","soil":["Loamy","Sandy"],"season":"Rabi","min_temp":15,"max_temp":25,"min_rain":300,"max_rain":800},
+                {"crop":"Millet","soil":["Sandy","Loamy"],"season":"Kharif","min_temp":20,"max_temp":35,"min_rain":250,"max_rain":800},
+                {"crop":"Banana","soil":["Loamy","Clay"],"season":"Year-round","min_temp":25,"max_temp":35,"min_rain":1200,"max_rain":2500},
+                {"crop":"Cabbage","soil":["Loamy"],"season":"Rabi","min_temp":15,"max_temp":22,"min_rain":300,"max_rain":800},
+                {"crop":"Cauliflower","soil":["Loamy"],"season":"Rabi","min_temp":15,"max_temp":22,"min_rain":300,"max_rain":800},
+                {"crop":"Brinjal","soil":["Loamy"],"season":"Kharif","min_temp":20,"max_temp":30,"min_rain":400,"max_rain":1000},
+                {"crop":"Chili","soil":["Sandy","Loamy"],"season":"Kharif","min_temp":20,"max_temp":32,"min_rain":400,"max_rain":1200},
+                {"crop":"Cucumber","soil":["Loamy"],"season":"Kharif","min_temp":18,"max_temp":30,"min_rain":300,"max_rain":900},
+                {"crop":"Pumpkin","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":20,"max_temp":32,"min_rain":300,"max_rain":1000},
+                {"crop":"Carrot","soil":["Sandy","Loamy"],"season":"Rabi","min_temp":12,"max_temp":22,"min_rain":300,"max_rain":700},
+                {"crop":"Pea","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":20,"min_rain":250,"max_rain":700},
+                {"crop":"Green Gram","soil":["Sandy","Loamy"],"season":"Kharif","min_temp":25,"max_temp":35,"min_rain":400,"max_rain":900},
+                {"crop":"Black Gram","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":25,"max_temp":35,"min_rain":400,"max_rain":900},
+                {"crop":"Mustard","soil":["Loamy","Clay"],"season":"Rabi","min_temp":10,"max_temp":25,"min_rain":200,"max_rain":600},
+                {"crop":"Sunflower","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":20,"max_temp":30,"min_rain":400,"max_rain":1000},
+                {"crop":"Papaya","soil":["Loamy","Clay"],"season":"Year-round","min_temp":22,"max_temp":35,"min_rain":1200,"max_rain":2000},
+                {"crop":"Mango","soil":["Loamy","Sandy"],"season":"Summer","min_temp":25,"max_temp":35,"min_rain":750,"max_rain":2000},
+                {"crop":"Pineapple","soil":["Loamy"],"season":"Year-round","min_temp":20,"max_temp":32,"min_rain":1200,"max_rain":2500},
+                {"crop":"Ginger","soil":["Loamy"],"season":"Kharif","min_temp":20,"max_temp":30,"min_rain":1500,"max_rain":2500},
+                {"crop":"Turmeric","soil":["Loamy","Clay"],"season":"Kharif","min_temp":20,"max_temp":35,"min_rain":1500,"max_rain":2500},
+                {"crop":"Coriander","soil":["Loamy"],"season":"Rabi","min_temp":15,"max_temp":25,"min_rain":250,"max_rain":700},
+                {"crop":"Fenugreek","soil":["Loamy"],"season":"Rabi","min_temp":15,"max_temp":25,"min_rain":250,"max_rain":700},
+                {"crop":"Spinach","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":22,"min_rain":300,"max_rain":700},
+                {"crop":"Lettuce","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":22,"min_rain":300,"max_rain":700},
+                {"crop":"Okra","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":25,"max_temp":35,"min_rain":400,"max_rain":1000},
+                {"crop":"Beetroot","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":25,"min_rain":300,"max_rain":800},
+                {"crop":"Radish","soil":["Loamy"],"season":"Rabi","min_temp":10,"max_temp":22,"min_rain":300,"max_rain":700},
+                {"crop":"Sweet Potato","soil":["Loamy","Sandy"],"season":"Kharif","min_temp":20,"max_temp":32,"min_rain":400,"max_rain":1200},
+                {"crop":"Strawberry","soil":["Loamy"],"season":"Year-round","min_temp":15,"max_temp":25,"min_rain":500,"max_rain":1200},
+                {"crop":"Almond","soil":["Sandy","Loamy"],"season":"Winter","min_temp":10,"max_temp":30,"min_rain":300,"max_rain":800},
+                {"crop":"Cashew","soil":["Sandy","Loamy"],"season":"Summer","min_temp":25,"max_temp":35,"min_rain":1000,"max_rain":2000},
+                {"crop":"Coffee","soil":["Loamy","Clay"],"season":"Year-round","min_temp":20,"max_temp":30,"min_rain":1200,"max_rain":2500},
+                {"crop":"Tea","soil":["Loamy","Clay"],"season":"Year-round","min_temp":18,"max_temp":28,"min_rain":1500,"max_rain":2500},
+                {"crop":"Apple","soil":["Loamy"],"season":"Winter","min_temp":10,"max_temp":25,"min_rain":500,"max_rain":1200},
+                {"crop":"Pomegranate","soil":["Loamy","Sandy"],"season":"Summer","min_temp":20,"max_temp":35,"min_rain":400,"max_rain":1200},
+                {"crop":"Guava","soil":["Loamy"],"season":"Year-round","min_temp":20,"max_temp":35,"min_rain":600,"max_rain":2000}
+            ];
+            
+            const cropIcons = {
+                "Wheat": "🌾", "Rice": "🍚", "Maize": "🌽", "Groundnut": "🥜", "Barley": "🌾",
+                "Sugarcane": "🌿", "Soybean": "🌱", "Cotton": "🌿", "Tomato": "🍅", "Potato": "🥔",
+                "Onion": "🧅", "Millet": "🌾", "Banana": "🍌", "Cabbage": "🥬", "Cauliflower": "🥦",
+                "Brinjal": "🍆", "Chili": "🌶️", "Cucumber": "🥒", "Pumpkin": "🎃", "Carrot": "🥕",
+                "Pea": "🫛", "Green Gram": "🌱", "Black Gram": "🌱", "Mustard": "🌱", "Sunflower": "🌻",
+                "Papaya": "🥭", "Mango": "🥭", "Pineapple": "🍍", "Ginger": "🫚", "Turmeric": " rhizome",
+                "Coriander": "🌿", "Fenugreek": "🌿", "Spinach": "🍃", "Lettuce": "🥬", "Okra": "🌱",
+                "Beetroot": "🍠", "Radish": "🥕", "Sweet Potato": "🍠", "Strawberry": "🍓", "Almond": "🌰",
+                "Cashew": "🥜", "Coffee": "☕", "Tea": "🍵", "Apple": "🍎", "Pomegranate": "🍎",
+                "Guava": "🍐"
+            };
+
+            const cropDetails = {
+                "Wheat": {
+                    scientific_name: "Triticum aestivum",
+                    category: "Cereal",
+                    description: "A global staple, wheat is a hardy cereal crop that thrives in temperate climates. It is the primary source for flour and is a key component of bread, pasta, and many other foods.",
+                    uses: "Flour for bread, cakes, pasta, and noodles; a source of alcohol and animal feed.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Rust fungi, powdery mildew, aphids, and wheat stem sawfly are common concerns.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Sow seeds 1-2 inches deep, 6-7 inches apart in rows.",
+                    fertilizer: "Balanced NPK (Nitrogen-Phosphorus-Potassium) fertilizer at sowing and tillering.",
+                    irrigation: "Requires moderate water, especially during sowing and grain filling. 2-3 irrigations are common.",
+                    weeding: "Regular weeding is necessary, especially early in growth. Use herbicides or manual removal.",
+                    yield: "Approx. 2,500 - 3,500 kg/hectare.",
+                    harvesting: "Harvest when grains are hard and stalks turn golden. Threshing is done to separate grains.",
+                    market: "High and stable demand. Prices fluctuate with global supply.",
+                    storage: "Store in a cool, dry place to prevent moisture and pest damage.",
+                    value_addition: "Milling into flour, pasta production, and biofuel.",
+                    image_url: "https://placehold.co/400x300/A1D1A0/ffffff?text=Wheat+Field"
+                },
+                "Rice": {
+                    scientific_name: "Oryza sativa",
+                    category: "Cereal",
+                    description: "A fundamental crop for over half the world's population, rice is a tropical plant that requires high temperatures and vast amounts of water for cultivation.",
+                    uses: "Consumed as a grain; used to make rice flour, oil, and beer.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Rice blast, bacterial blight, brown planthoppers, and stem borers are major threats.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "3-6 months.",
+                    planting: "Transplant seedlings 6-8 inches apart in flooded fields.",
+                    fertilizer: "High nitrogen fertilizer during vegetative growth.",
+                    irrigation: "Requires standing water (paddy fields).",
+                    weeding: "Hand weeding or herbicides for weed control in flooded fields.",
+                    yield: "Approx. 3,000 - 6,000 kg/hectare.",
+                    harvesting: "Harvest when grains are golden and hard. Thresh to separate grains.",
+                    market: "Global staple with consistent demand.",
+                    storage: "Store in airtight containers to prevent moisture and insects.",
+                    value_addition: "Puffed rice, rice flour, and rice bran oil.",
+                    image_url: "https://placehold.co/400x300/80C280/ffffff?text=Rice+Paddy"
+                },
+                "Maize": {
+                    scientific_name: "Zea mays",
+                    category: "Cereal",
+                    description: "Also known as corn, maize is a versatile grain with numerous uses. It adapts to a wide range of climates but performs best in warm, sunny conditions.",
+                    uses: "Food for humans and livestock, corn oil, starch, and biofuel (ethanol).",
+                    soil_ph: "5.5 - 7.0",
+                    pests_diseases: "Corn earworm, European corn borer, and corn smut are common pests and diseases.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "3-4 months.",
+                    planting: "Sow seeds 1-2 inches deep, 8-12 inches apart in rows.",
+                    fertilizer: "Requires high nitrogen fertilizer.",
+                    irrigation: "Needs consistent moisture, especially during silking and tasseling.",
+                    weeding: "Regular weeding is crucial to prevent competition for nutrients.",
+                    yield: "Approx. 4,000 - 7,000 kg/hectare.",
+                    harvesting: "Harvest when kernels are firm and fully colored.",
+                    market: "High demand for both human and animal consumption.",
+                    storage: "Store kernels in a dry, ventilated area to prevent rot.",
+                    value_addition: "Corn flour, corn oil, and ethanol.",
+                    image_url: "https://placehold.co/400x300/E8D55A/ffffff?text=Maize+Field"
+                },
+                "Groundnut": {
+                    scientific_name: "Arachis hypogaea",
+                    category: "Pulse",
+                    description: "A legume grown primarily for its edible seeds, which are rich in oil and protein. Groundnuts require hot, humid weather and a long growing season.",
+                    uses: "Edible oil, peanut butter, roasted nuts, and animal feed.",
+                    soil_ph: "5.9 - 7.0",
+                    pests_diseases: "Root-knot nematodes, aphids, and rust are common problems.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Sow seeds 2 inches deep, 6-8 inches apart in rows.",
+                    fertilizer: "Requires phosphorus and potassium. Use a balanced fertilizer.",
+                    irrigation: "Consistent watering, especially during flowering and pod development.",
+                    weeding: "Manual weeding is preferred to avoid damaging the shallow root system.",
+                    yield: "Approx. 1,500 - 2,500 kg/hectare.",
+                    harvesting: "Harvest when leaves yellow and begin to wither. Pull plants from the ground.",
+                    market: "Stable demand for oil and snacks.",
+                    storage: "Store in a cool, dry place to prevent rancidity.",
+                    value_addition: "Peanut butter, cooking oil, and snacks.",
+                    image_url: "https://placehold.co/400x300/D4A05B/ffffff?text=Groundnut+Harvest"
+                },
+                "Barley": {
+                    scientific_name: "Hordeum vulgare",
+                    category: "Cereal",
+                    description: "A major cereal grain used primarily for animal feed and as a fermentable source for brewing. It is a very adaptable crop that can thrive in a variety of climates.",
+                    uses: "Animal feed, malt for beer and whiskey, and a component in health foods.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Barley yellow dwarf virus, loose smut, and aphids.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Sow seeds 1-2 inches deep, 6-7 inches apart in rows.",
+                    fertilizer: "Balanced NPK fertilizer at sowing.",
+                    irrigation: "Tolerant to drought, but light irrigation can increase yield.",
+                    weeding: "Regular weeding is necessary, especially early in growth. Use herbicides or manual removal.",
+                    yield: "Approx. 2,000 - 3,000 kg/hectare.",
+                    harvesting: "Harvest when grains are hard and dry. Thresh to separate.",
+                    market: "Primary use is in brewing and animal feed, with steady demand.",
+                    storage: "Store in a cool, dry place.",
+                    value_addition: "Malt for brewing, flour for baking, and health supplements.",
+                    image_url: "https://placehold.co/400x300/B2A781/ffffff?text=Barley+Field"
+                },
+                "Sugarcane": {
+                    scientific_name: "Saccharum officinarum",
+                    category: "Cash Crop",
+                    description: "A tall perennial grass grown for its sucrose-rich stalks. Sugarcane requires a tropical or subtropical climate and a long, warm growing season with high rainfall.",
+                    uses: "Sugar production, ethanol, rum, and molasses.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Red rot, sugarcane borers, and white grubs.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "10-18 months.",
+                    planting: "Plant sugarcane 'setts' (stem cuttings) horizontally in furrows.",
+                    fertilizer: "Requires large amounts of nitrogen and phosphorus.",
+                    irrigation: "Needs consistent and ample water. Drip irrigation is efficient.",
+                    weeding: "Weeding is critical, especially in the early stages, to prevent competition.",
+                    yield: "Approx. 80,000 - 120,000 kg/hectare.",
+                    harvesting: "Harvest when stalks are mature and sucrose content is high. Done manually or mechanically.",
+                    market: "High global demand for sugar and biofuels.",
+                    storage: "Difficult to store raw. Must be processed quickly.",
+                    value_addition: "Sugar, jaggery, ethanol, and rum production.",
+                    image_url: "https://placehold.co/400x300/7DB076/ffffff?text=Sugarcane+Farm"
+                },
+                "Soybean": {
+                    scientific_name: "Glycine max",
+                    category: "Pulse",
+                    description: "A versatile legume used for its oil and protein. Soybeans are a key component in many food products and are an important source of animal feed.",
+                    uses: "Soy oil, tofu, soy milk, and animal feed.",
+                    soil_ph: "6.0 - 6.8",
+                    pests_diseases: "Soybean rust, frogeye leaf spot, and stink bugs.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Sow seeds 1-2 inches deep, 1-2 inches apart in rows.",
+                    fertilizer: "Fixes its own nitrogen, so minimal nitrogen fertilizer is needed. Requires phosphorus and potassium.",
+                    irrigation: "Needs consistent moisture, especially during flowering and pod development.",
+                    weeding: "Herbicide application or manual weeding to control weeds.",
+                    yield: "Approx. 2,000 - 3,500 kg/hectare.",
+                    harvesting: "Harvest when pods are dry and rattling. Thresh to remove beans.",
+                    market: "High demand in the food and animal feed industries.",
+                    storage: "Store in a cool, dry place to maintain quality.",
+                    value_addition: "Tofu, soy sauce, and edamame.",
+                    image_url: "https://placehold.co/400x300/8B9C83/ffffff?text=Soybean+Plant"
+                },
+                "Cotton": {
+                    scientific_name: "Gossypium hirsutum",
+                    category: "Cash Crop",
+                    description: "A shrub that produces a soft, fluffy fiber used for textiles. It requires a long, frost-free growing season with plenty of sunshine.",
+                    uses: "Textile production, cottonseed oil, and animal feed.",
+                    soil_ph: "5.5 - 7.5",
+                    pests_diseases: "Cotton bollworm, lygus bugs, and fusarium wilt.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "5-6 months.",
+                    planting: "Sow seeds 1-2 inches deep, 12-18 inches apart in rows.",
+                    fertilizer: "Requires ample nitrogen, phosphorus, and potassium.",
+                    irrigation: "Needs consistent water, especially during flowering and boll development.",
+                    weeding: "Weed control is critical to prevent competition.",
+                    yield: "Approx. 1,000 - 2,000 kg/hectare of lint.",
+                    harvesting: "Harvest by hand or machine when bolls open and the lint is fluffy.",
+                    market: "High global demand for textiles.",
+                    storage: "Store bales in a dry, covered area.",
+                    value_addition: "Spinning into yarn, cottonseed oil production, and animal feed.",
+                    image_url: "https://placehold.co/400x300/D8D8D8/ffffff?text=Cotton+Boll"
+                },
+                "Tomato": {
+                    scientific_name: "Solanum lycopersicum",
+                    category: "Vegetable",
+                    description: "A popular fruit (botanically) that is used as a vegetable in cooking. Tomatoes thrive in warm weather and can be grown in a variety of loamy soils.",
+                    uses: "Fresh consumption, sauces, pastes, and canned goods.",
+                    soil_ph: "6.0 - 6.8",
+                    pests_diseases: "Tomato hornworm, blight, and fusarium wilt.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Transplant seedlings 18-24 inches apart in rows.",
+                    fertilizer: "Requires a balanced fertilizer with higher phosphorus.",
+                    irrigation: "Needs consistent, deep watering to prevent blossom end rot.",
+                    weeding: "Regular weeding and mulching to conserve moisture.",
+                    yield: "Approx. 25,000 - 40,000 kg/hectare.",
+                    harvesting: "Harvest when firm and fully colored. Can be picked at various stages depending on use.",
+                    market: "Stable demand for fresh and processed tomatoes.",
+                    storage: "Store ripe tomatoes at room temperature to maintain flavor.",
+                    value_addition: "Tomato paste, sauce, and juice.",
+                    image_url: "https://placehold.co/400x300/E86850/ffffff?text=Tomatoes+on+vine"
+                },
+                "Potato": {
+                    scientific_name: "Solanum tuberosum",
+                    category: "Vegetable",
+                    description: "A starchy tuber that is a major staple food. Potatoes prefer cooler temperatures and well-drained, sandy or loamy soil.",
+                    uses: "Fresh consumption, processed foods like french fries and chips, and starch.",
+                    soil_ph: "5.0 - 6.0",
+                    pests_diseases: "Late blight, Colorado potato beetle, and potato scab.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-4 months.",
+                    planting: "Plant 'seed potatoes' 4-6 inches deep, 12-15 inches apart.",
+                    fertilizer: "Requires a balanced fertilizer with high potassium.",
+                    irrigation: "Needs consistent water, especially during tuber formation.",
+                    weeding: "Hilling (mounding soil) is crucial to protect tubers from sunlight and control weeds.",
+                    yield: "Approx. 20,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when foliage dies back. Dig up tubers carefully.",
+                    market: "High demand for fresh and processed potatoes.",
+                    storage: "Store in a cool, dark, and well-ventilated area.",
+                    value_addition: "Potato chips, french fries, and potato starch.",
+                    image_url: "https://placehold.co/400x300/B2A595/ffffff?text=Harvested+Potatoes"
+                },
+                "Onion": {
+                    scientific_name: "Allium cepa",
+                    category: "Vegetable",
+                    description: "A widely cultivated vegetable known for its pungent flavor. Onions grow best in moderate temperatures and rich, well-drained soil.",
+                    uses: "Cooking ingredient, flavoring, and fresh consumption.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Onion thrips, onion maggots, and downy mildew.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Plant bulbs or seeds 1 inch deep, 4 inches apart.",
+                    fertilizer: "Requires nitrogen and potassium.",
+                    irrigation: "Needs consistent moisture, but avoid overwatering to prevent rot.",
+                    weeding: "Weed carefully to avoid damaging the shallow root system.",
+                    yield: "Approx. 25,000 - 40,000 kg/hectare.",
+                    harvesting: "Harvest when tops fall over. Cure in a dry, ventilated area.",
+                    market: "Stable demand as a kitchen staple.",
+                    storage: "Store in a cool, dry place with good air circulation.",
+                    value_addition: "Dehydrated onion flakes, powder, and pickled onions.",
+                    image_url: "https://placehold.co/400x300/D2A979/ffffff?text=Onion+Bulbs"
+                },
+                "Millet": {
+                    scientific_name: "Various species (e.g., Pennisetum glaucum)",
+                    category: "Cereal",
+                    description: "A group of highly varied small-seeded grasses. Millets are highly tolerant of drought and are well-suited for arid and semi-arid regions.",
+                    uses: "Food grains, flour, and a source of animal feed.",
+                    soil_ph: "5.5 - 7.5",
+                    pests_diseases: "Stem borer, leaf blast, and downy mildew.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Broadcast seeds or sow in rows 1 inch deep.",
+                    fertilizer: "Low-input crop. Minimal fertilizer is needed.",
+                    irrigation: "Highly drought-tolerant. Only needs water at key growth stages.",
+                    weeding: "Initial weeding is important for good establishment.",
+                    yield: "Approx. 1,000 - 2,000 kg/hectare.",
+                    harvesting: "Harvest when grains are dry and hard. Thresh to separate.",
+                    market: "Growing popularity due to health benefits and gluten-free nature.",
+                    storage: "Store in a dry, airtight container.",
+                    value_addition: "Millet flour, health food products, and snacks.",
+                    image_url: "https://placehold.co/400x300/B8B5A7/ffffff?text=Millet+Grains"
+                },
+                "Banana": {
+                    scientific_name: "Musa spp.",
+                    category: "Fruit",
+                    description: "A tropical fruit that grows in a variety of hot, humid climates. Banana plants are large herbaceous flowering plants.",
+                    uses: "Fresh consumption, cooking, and banana flour.",
+                    soil_ph: "5.5 - 7.0",
+                    pests_diseases: "Panama disease, black sigatoka, and banana weevil.",
+                    sunlight: "Full sun (6+ hours daily).",
+                    growth_duration: "10-15 months from planting to harvest.",
+                    planting: "Plant rhizomes (suckers) in a 2-3 ft deep pit.",
+                    fertilizer: "Requires high levels of potassium and nitrogen.",
+                    irrigation: "Needs consistent, high water supply.",
+                    weeding: "Regular weeding around the base of the plant.",
+                    yield: "Approx. 30,000 - 50,000 kg/hectare.",
+                    harvesting: "Harvest when bananas are green and plump. They ripen off the plant.",
+                    market: "High global demand as a fresh fruit.",
+                    storage: "Store green bananas in a cool, dark place to ripen.",
+                    value_addition: "Banana chips, flour, and dried bananas.",
+                    image_url: "https://placehold.co/400x300/E5D958/ffffff?text=Banana+Tree"
+                },
+                "Cabbage": {
+                    scientific_name: "Brassica oleracea var. capitata",
+                    category: "Vegetable",
+                    description: "A leafy green, biennial vegetable. It is a cool-season crop that requires consistent moisture to produce dense heads.",
+                    uses: "Fresh consumption in salads, coleslaw, and cooked dishes.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Cabbage worm, aphids, and black rot.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Transplant seedlings 12-24 inches apart.",
+                    fertilizer: "Requires high nitrogen fertilizer for leaf growth.",
+                    irrigation: "Needs consistent and even moisture to prevent heads from splitting.",
+                    weeding: "Regular shallow weeding to prevent root damage.",
+                    yield: "Approx. 20,000 - 40,000 kg/hectare.",
+                    harvesting: "Harvest when heads are firm. Cut the stem just above the ground.",
+                    market: "Stable demand as a fresh vegetable.",
+                    storage: "Store in a cool, humid place or in a refrigerator.",
+                    value_addition: "Sauerkraut, coleslaw mix, and dehydrated flakes.",
+                    image_url: "https://placehold.co/400x300/94C97D/ffffff?text=Cabbage+Head"
+                },
+                "Cauliflower": {
+                    scientific_name: "Brassica oleracea var. botrytis",
+                    category: "Vegetable",
+                    description: "A cool-season vegetable with a white, edible flower head. It needs rich, moist soil and stable temperatures to grow well.",
+                    uses: "Cooked vegetable, roasted, and a low-carb alternative in many dishes.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Cabbage looper, clubroot, and black rot.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Transplant seedlings 18-24 inches apart.",
+                    fertilizer: "Requires high nitrogen and boron.",
+                    irrigation: "Needs consistent moisture. Avoid water stress.",
+                    weeding: "Regular weeding and hilling to protect the head.",
+                    yield: "Approx. 15,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when heads are firm and white. Cut the stem below the head.",
+                    market: "Stable demand as a fresh vegetable.",
+                    storage: "Store in a refrigerator to maintain freshness.",
+                    value_addition: "Frozen florets, rice, and pizza crust.",
+                    image_url: "https://placehold.co/400x300/F0EFE0/ffffff?text=Cauliflower+Head"
+                },
+                "Brinjal": {
+                    scientific_name: "Solanum melongena",
+                    category: "Vegetable",
+                    description: "Known as eggplant, this is a heat-loving vegetable that needs a long, warm growing season and consistent moisture to produce fruit.",
+                    uses: "Cooked vegetable in curries, stews, and roasted dishes.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Brinjal fruit and shoot borer, fusarium wilt.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Transplant seedlings 24-36 inches apart.",
+                    fertilizer: "Requires high phosphorus and potassium.",
+                    irrigation: "Needs consistent moisture, but avoid overwatering.",
+                    weeding: "Regular weeding and mulching to control weeds.",
+                    yield: "Approx. 20,000 - 35,000 kg/hectare.",
+                    harvesting: "Harvest when fruits are glossy and firm. Cut from the plant with a small piece of stem.",
+                    market: "Stable demand in local markets.",
+                    storage: "Store in a cool, dry place for a few days.",
+                    value_addition: "Pickles, powders, and dehydrated slices.",
+                    image_url: "https://placehold.co/400x300/B27D8C/ffffff?text=Brinjal+Plant"
+                },
+                "Chili": {
+                    scientific_name: "Capsicum annuum",
+                    category: "Spice",
+                    description: "A spicy fruit known for its use in hot sauces and as a seasoning. Chili plants thrive in warm, humid conditions.",
+                    uses: "Fresh consumption, dried powder, and flavoring.",
+                    soil_ph: "6.0 - 6.8",
+                    pests_diseases: "Thrips, aphids, and pepper weevil.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "2-3 months to first harvest, then continuous.",
+                    planting: "Transplant seedlings 18-24 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture, but avoid waterlogging.",
+                    weeding: "Regular weeding to prevent competition.",
+                    yield: "Approx. 10,000 - 20,000 kg/hectare.",
+                    harvesting: "Harvest when chilies are mature and have the desired color.",
+                    market: "Stable demand for fresh and dried chilies.",
+                    storage: "Dry chilies for long-term storage.",
+                    value_addition: "Chili powder, flakes, and hot sauces.",
+                    image_url: "https://placehold.co/400x300/E84E40/ffffff?text=Red+Chili+Peppers"
+                },
+                "Cucumber": {
+                    scientific_name: "Cucumis sativus",
+                    category: "Vegetable",
+                    description: "A widely cultivated creeping vine plant that is a cool, refreshing vegetable. It thrives in warm weather and requires consistent watering.",
+                    uses: "Fresh consumption in salads, pickles, and snacks.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Downy mildew, cucumber beetles, and powdery mildew.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 1 inch deep, 12-18 inches apart.",
+                    fertilizer: "Requires nitrogen for vine growth.",
+                    irrigation: "Needs consistent water, especially during flowering and fruiting.",
+                    weeding: "Regular weeding to prevent competition for nutrients.",
+                    yield: "Approx. 15,000 - 25,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is firm and green. Pick daily for continuous production.",
+                    market: "Stable demand as a fresh vegetable.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Pickles and relishes.",
+                    image_url: "https://placehold.co/400x300/80BA82/ffffff?text=Fresh+Cucumbers"
+                },
+                "Pumpkin": {
+                    scientific_name: "Cucurbita pepo",
+                    category: "Vegetable",
+                    description: "A popular squash that grows best in rich, moist soil and sunny conditions. It is known for its use in pies and as a decorative gourd.",
+                    uses: "Pies, soups, roasted vegetable, and seeds.",
+                    soil_ph: "6.0 - 6.5",
+                    pests_diseases: "Squash vine borer, powdery mildew, and squash bugs.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "3-4 months.",
+                    planting: "Sow seeds 1 inch deep, 24-36 inches apart.",
+                    fertilizer: "Needs high phosphorus and potassium.",
+                    irrigation: "Needs consistent water, especially during fruiting.",
+                    weeding: "Weeding and mulching to control weeds.",
+                    yield: "Approx. 10,000 - 20,000 kg/hectare.",
+                    harvesting: "Harvest when rind is hard and vines are drying.",
+                    market: "Seasonal demand, but stable for processed goods.",
+                    storage: "Store in a cool, dry place for several months.",
+                    value_addition: "Pumpkin puree, pumpkin seed oil, and canned pumpkin.",
+                    image_url: "https://placehold.co/400x300/E8994E/ffffff?text=Pumpkin+Patch"
+                },
+                "Carrot": {
+                    scientific_name: "Daucus carota subsp. sativus",
+                    category: "Vegetable",
+                    description: "A root vegetable that prefers loose soil and a cooler climate. The soil must be free of rocks to allow the root to grow straight.",
+                    uses: "Fresh consumption, cooked vegetable, and juicing.",
+                    soil_ph: "6.0 - 6.8",
+                    pests_diseases: "Carrot rust fly, leaf blight, and root-knot nematodes.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-4 months.",
+                    planting: "Sow seeds 0.5 inches deep, 2-3 inches apart.",
+                    fertilizer: "Needs phosphorus and potassium. Avoid excess nitrogen.",
+                    irrigation: "Needs consistent moisture to ensure uniform root growth.",
+                    weeding: "Weeding is critical as carrots don't compete well with weeds.",
+                    yield: "Approx. 15,000 - 25,000 kg/hectare.",
+                    harvesting: "Harvest when roots reach the desired size. Pull from the ground.",
+                    market: "Stable demand as a fresh vegetable.",
+                    storage: "Store in a cool, humid place or in the refrigerator.",
+                    value_addition: "Carrot juice, dehydrated carrot, and canned carrots.",
+                    image_url: "https://placehold.co/400x300/F0A33A/ffffff?text=Carrots+in+soil"
+                },
+                "Pea": {
+                    scientific_name: "Pisum sativum",
+                    category: "Pulse",
+                    description: "A nitrogen-fixing legume that thrives in cool weather. Peas are a healthy and delicious addition to many meals.",
+                    uses: "Fresh consumption, frozen vegetables, and soups.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Pea aphid, fusarium wilt, and powdery mildew.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 1-2 inches deep, 1-2 inches apart.",
+                    fertilizer: "Fixes its own nitrogen. Requires phosphorus and potassium.",
+                    irrigation: "Needs consistent moisture, especially during flowering and pod development.",
+                    weeding: "Manual weeding is recommended to prevent root damage.",
+                    yield: "Approx. 5,000 - 8,000 kg/hectare.",
+                    harvesting: "Harvest when pods are plump and green. Pick regularly for more yield.",
+                    market: "Stable demand for fresh and frozen peas.",
+                    storage: "Store in a refrigerator for a few days, or freeze for long-term storage.",
+                    value_addition: "Frozen peas, canned peas, and pea flour.",
+                    image_url: "https://placehold.co/400x300/A0D27B/ffffff?text=Peas+in+Pod"
+                },
+                "Green Gram": {
+                    scientific_name: "Vigna radiata",
+                    category: "Pulse",
+                    description: "A quick-growing legume ideal for warm, tropical climates. It is a key source of protein and is used in various dishes.",
+                    uses: "Sprouts, curries, and soups.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Bean pod borer, aphids, and rust.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 1 inch deep, 4-6 inches apart.",
+                    fertilizer: "Requires phosphorus and potassium. Fixes its own nitrogen.",
+                    irrigation: "Drought tolerant, but light irrigation can increase yield.",
+                    weeding: "Regular weeding is necessary to prevent competition.",
+                    yield: "Approx. 1,000 - 1,500 kg/hectare.",
+                    harvesting: "Harvest when pods are mature and dry. Thresh to remove beans.",
+                    market: "Stable demand in Asian markets.",
+                    storage: "Store in a dry, airtight container.",
+                    value_addition: "Sprouts, flour, and dhal.",
+                    image_url: "https://placehold.co/400x300/D4A05B/ffffff?text=Green+Gram+Beans"
+                },
+                "Black Gram": {
+                    scientific_name: "Vigna mungo",
+                    category: "Pulse",
+                    description: "A fast-maturing legume that thrives in warm conditions. It is a major source of protein in many parts of the world.",
+                    uses: "Dhal, curries, and flatbreads.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Pod borer, whitefly, and yellow mosaic virus.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 1 inch deep, 4-6 inches apart.",
+                    fertilizer: "Requires phosphorus and potassium. Fixes its own nitrogen.",
+                    irrigation: "Drought tolerant, but light irrigation can increase yield.",
+                    weeding: "Regular weeding to prevent competition.",
+                    yield: "Approx. 1,000 - 1,500 kg/hectare.",
+                    harvesting: "Harvest when pods are dry and black. Thresh to remove beans.",
+                    market: "Stable demand for use in Indian cuisine.",
+                    storage: "Store in a dry, airtight container.",
+                    value_addition: "Dhal, idli/dosa batter, and papad.",
+                    image_url: "https://placehold.co/400x300/808080/ffffff?text=Black+Gram+Beans"
+                },
+                "Mustard": {
+                    scientific_name: "Brassica juncea",
+                    category: "Spice",
+                    description: "A cool-season crop that can withstand colder temperatures. It is grown for its seeds, which are used to produce oil and condiments.",
+                    uses: "Mustard oil, flavoring, and leafy greens.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Mustard aphid, white rust, and leaf spot.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 0.5 inches deep, 4-6 inches apart.",
+                    fertilizer: "Requires nitrogen and phosphorus.",
+                    irrigation: "Needs consistent moisture, but is somewhat drought tolerant.",
+                    weeding: "Regular weeding to ensure healthy growth.",
+                    yield: "Approx. 1,000 - 1,500 kg/hectare.",
+                    harvesting: "Harvest when pods are mature and turn yellow. Thresh to remove seeds.",
+                    market: "High demand for cooking oil and spice.",
+                    storage: "Store seeds in a cool, dry, and dark place.",
+                    value_addition: "Cooking oil, mustard powder, and condiments.",
+                    image_url: "https://placehold.co/400x300/E5B65A/ffffff?text=Mustard+Seeds"
+                },
+                "Sunflower": {
+                    scientific_name: "Helianthus annuus",
+                    category: "Oilseed",
+                    description: "A bright and cheerful crop that thrives in sunny, temperate climates. It is grown for its seeds, which are a source of edible oil.",
+                    uses: "Sunflower oil, roasted seeds, and a decorative plant.",
+                    soil_ph: "6.0 - 7.5",
+                    pests_diseases: "Sclerotinia stem rot, sunflower moth, and rust.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "3-4 months.",
+                    planting: "Sow seeds 1-2 inches deep, 12-18 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent water, especially during head development.",
+                    weeding: "Weed control is important, especially in the early stages.",
+                    yield: "Approx. 1,500 - 2,500 kg/hectare.",
+                    harvesting: "Harvest when heads turn yellow and seeds are mature. Cut the head from the stalk.",
+                    market: "High demand for cooking oil.",
+                    storage: "Store seeds in a cool, dry place.",
+                    value_addition: "Sunflower oil, snacks, and bird seed.",
+                    image_url: "https://placehold.co/400x300/E8D55A/ffffff?text=Sunflower+Field"
+                },
+                "Papaya": {
+                    scientific_name: "Carica papaya",
+                    category: "Fruit",
+                    description: "A tropical fruit that requires a warm climate and well-drained soil. It is known for its sweet, buttery flesh and is consumed fresh or used in various dishes.",
+                    uses: "Fresh consumption, smoothies, and salads.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Papaya ringspot virus, root rot, and aphids.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "9-12 months to first harvest, then continuous.",
+                    planting: "Plant seedlings 6-10 ft apart.",
+                    fertilizer: "Requires a balanced fertilizer with high phosphorus and potassium.",
+                    irrigation: "Needs consistent water, but avoid waterlogging.",
+                    weeding: "Regular weeding around the base of the plant.",
+                    yield: "Approx. 30,000 - 50,000 kg/hectare.",
+                    harvesting: "Harvest when fruit starts to turn yellow. They ripen off the tree.",
+                    market: "Stable demand for fresh fruit.",
+                    storage: "Store in a cool, dark place to ripen.",
+                    value_addition: "Juice, dried papaya, and papaya powder.",
+                    image_url: "https://placehold.co/400x300/FFA07A/ffffff?text=Ripe+Papaya"
+                },
+                "Mango": {
+                    scientific_name: "Mangifera indica",
+                    category: "Fruit",
+                    description: "A tropical fruit that grows in warm, humid climates. Mangoes are known for their sweet, juicy flesh and are often called the 'king of fruits'.",
+                    uses: "Fresh consumption, juices, and desserts.",
+                    soil_ph: "5.5 - 7.5",
+                    pests_diseases: "Anthracnose, powdery mildew, and fruit flies.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "3-5 years to first fruiting.",
+                    planting: "Plant saplings 30-40 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent water, but avoid waterlogging.",
+                    weeding: "Weed control is important for young trees.",
+                    yield: "Approx. 10,000 - 20,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is mature. They ripen off the tree.",
+                    market: "High demand for fresh fruit and processed products.",
+                    storage: "Store green fruit in a cool, dark place to ripen.",
+                    image_url: "https://placehold.co/400x300/FFD700/ffffff?text=Mango+on+Tree"
+                },
+                "Pineapple": {
+                    scientific_name: "Ananas comosus",
+                    category: "Fruit",
+                    description: "A tropical fruit that needs a warm climate and consistent rainfall. It is a popular fruit with a unique, tangy flavor.",
+                    uses: "Fresh consumption, juices, and canned fruit.",
+                    soil_ph: "4.5 - 6.5",
+                    pests_diseases: "Mealybugs, heart rot, and wilt.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "18-24 months from planting to harvest.",
+                    planting: "Plant crowns or slips 1-2 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture, but is drought-tolerant.",
+                    weeding: "Weeding is crucial, as pineapples don't compete well with weeds.",
+                    yield: "Approx. 20,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is mature and sweet-smelling. Cut from the plant.",
+                    market: "Stable demand for fresh and processed fruit.",
+                    storage: "Store in a cool, dry place.",
+                    value_addition: "Juice, canned slices, and dried pineapple.",
+                    image_url: "https://placehold.co/400x300/E8D25A/ffffff?text=Pineapple+Plant"
+                },
+                "Ginger": {
+                    scientific_name: "Zingiber officinale",
+                    category: "Spice",
+                    description: "A root spice that requires a hot, humid climate and shade. It is a versatile spice used in both sweet and savory dishes.",
+                    uses: "Spice, herbal medicine, and flavoring.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Bacterial wilt, rhizome rot, and shoot borer.",
+                    sunlight: "Partial shade to full sun.",
+                    growth_duration: "6-10 months.",
+                    planting: "Plant rhizome pieces 2-4 inches deep, 1 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent and high moisture.",
+                    weeding: "Weeding is important, as ginger has a shallow root system.",
+                    yield: "Approx. 15,000 - 25,000 kg/hectare.",
+                    harvesting: "Harvest when leaves turn yellow and die back. Dig up rhizomes.",
+                    market: "High demand for fresh and processed ginger.",
+                    storage: "Store rhizomes in a cool, dry place.",
+                    value_addition: "Ginger powder, candied ginger, and oil.",
+                    image_url: "https://placehold.co/400x300/A0815C/ffffff?text=Ginger+Root"
+                },
+                "Turmeric": {
+                    scientific_name: "Curcuma longa",
+                    category: "Spice",
+                    description: "A root spice that needs a hot, humid climate and well-drained soil. It is known for its vibrant yellow color and medicinal properties.",
+                    uses: "Spice, food coloring, and herbal medicine.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Rhizome rot, leaf blotch, and scale insects.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "7-9 months.",
+                    planting: "Plant rhizome pieces 2-3 inches deep, 1 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent and high moisture.",
+                    weeding: "Weeding is important, as turmeric has a shallow root system.",
+                    yield: "Approx. 25,000 - 35,000 kg/hectare.",
+                    harvesting: "Harvest when leaves turn yellow and die back. Dig up rhizomes.",
+                    market: "High demand for spice and medicinal uses.",
+                    storage: "Store rhizomes in a cool, dry place.",
+                    value_addition: "Turmeric powder, oil, and health supplements.",
+                    image_url: "https://placehold.co/400x300/FFD83D/ffffff?text=Turmeric+Root"
+                },
+                "Coriander": {
+                    scientific_name: "Coriandrum sativum",
+                    category: "Spice",
+                    description: "A cool-season herb that is sensitive to high temperatures. Both the leaves and seeds are used for cooking.",
+                    uses: "Fresh leaves (cilantro) and seeds (coriander powder).",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Coriander aphid, powdery mildew, and root-knot nematodes.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "1-3 months.",
+                    planting: "Sow seeds 0.5 inches deep, 6-8 inches apart.",
+                    fertilizer: "Needs a balanced fertilizer with high nitrogen for leaf growth.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 500 - 1,000 kg/hectare.",
+                    harvesting: "Harvest leaves as needed. For seeds, harvest when plants turn brown and seeds are dry.",
+                    market: "Stable demand for fresh leaves and seeds.",
+                    storage: "Store seeds in a cool, dry place. Store leaves in a refrigerator.",
+                    value_addition: "Coriander powder, oil, and spice blends.",
+                    image_url: "https://placehold.co/400x300/96C995/ffffff?text=Coriander+Leaves"
+                },
+                "Fenugreek": {
+                    scientific_name: "Trigonella foenum-graecum",
+                    category: "Spice",
+                    description: "A cool-season herb that grows well in mild climates. It is used in cooking and traditional medicine.",
+                    uses: "Leaves (methi) and seeds for flavoring.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Powdery mildew, aphids, and rust.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "1-3 months.",
+                    planting: "Sow seeds 0.5 inches deep, 4-6 inches apart.",
+                    fertilizer: "Fixes its own nitrogen. Requires phosphorus and potassium.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 800 - 1,200 kg/hectare.",
+                    harvesting: "Harvest leaves as needed. For seeds, harvest when pods turn yellow.",
+                    market: "Stable demand in Asian markets.",
+                    storage: "Store seeds in a cool, dry place.",
+                    value_addition: "Dried leaves (kasoori methi) and spice blends.",
+                    image_url: "https://placehold.co/400x300/B8B5A7/ffffff?text=Fenugreek+Leaves"
+                },
+                "Spinach": {
+                    scientific_name: "Spinacia oleracea",
+                    category: "Vegetable",
+                    description: "A leafy green that prefers cooler temperatures and rich, moist soil. It is a highly nutritious vegetable.",
+                    uses: "Fresh consumption, salads, and cooked dishes.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Spinach leafminer, aphids, and downy mildew.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "1-2 months.",
+                    planting: "Sow seeds 0.5 inches deep, 3-4 inches apart.",
+                    fertilizer: "Requires high nitrogen fertilizer for leafy growth.",
+                    irrigation: "Needs consistent moisture. Avoid water stress.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 5,000 - 10,000 kg/hectare.",
+                    harvesting: "Harvest outer leaves as needed or the entire plant at once.",
+                    market: "Stable demand as a fresh vegetable.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Frozen spinach, dehydrated flakes, and juice.",
+                    image_url: "https://placehold.co/400x300/80C280/ffffff?text=Fresh+Spinach"
+                },
+                "Lettuce": {
+                    scientific_name: "Lactuca sativa",
+                    category: "Vegetable",
+                    description: "A leafy green that thrives in cool, moist conditions. It is a key ingredient in salads.",
+                    uses: "Salads and sandwiches.",
+                    soil_ph: "6.0 - 6.8",
+                    pests_diseases: "Aphids, slugs, and bottom rot.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "1-3 months.",
+                    planting: "Sow seeds 0.5 inches deep, 6-12 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Weed control is important to prevent competition.",
+                    yield: "Approx. 15,000 - 25,000 kg/hectare.",
+                    harvesting: "Harvest outer leaves as needed or the entire head.",
+                    market: "Stable demand for fresh salads.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Pre-washed salad mixes and bags.",
+                    image_url: "https://placehold.co/400x300/94C97D/ffffff?text=Fresh+Lettuce"
+                },
+                "Okra": {
+                    scientific_name: "Abelmoschus esculentus",
+                    category: "Vegetable",
+                    description: "A heat-loving vegetable that grows well in warm, humid climates. It is known for its edible pods, which are used in many curries and stews.",
+                    uses: "Cooked pods in stews, curries, and fried dishes.",
+                    soil_ph: "6.0 - 6.5",
+                    pests_diseases: "Okra mosaic virus, fruit borer, and jassids.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "2-3 months to first harvest, then continuous.",
+                    planting: "Sow seeds 1 inch deep, 12-18 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 8,000 - 15,000 kg/hectare.",
+                    harvesting: "Harvest pods when they are tender and young. Pick every 2-3 days.",
+                    market: "Stable demand in local markets.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Frozen okra, pickles, and dehydrated slices.",
+                    image_url: "https://placehold.co/400x300/A0D27B/ffffff?text=Okra+Pods"
+                },
+                "Beetroot": {
+                    scientific_name: "Beta vulgaris",
+                    category: "Vegetable",
+                    description: "A root vegetable that tolerates a range of soil types and temperatures. It is known for its vibrant red color and earthy taste.",
+                    uses: "Fresh consumption, salads, and juices.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Cercospora leaf spot, aphids, and flea beetles.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "2-3 months.",
+                    planting: "Sow seeds 1 inch deep, 3-4 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 15,000 - 25,000 kg/hectare.",
+                    harvesting: "Harvest when roots reach the desired size. Pull from the ground.",
+                    market: "Stable demand for fresh and processed beetroot.",
+                    storage: "Store in a cool, dark place.",
+                    value_addition: "Beetroot juice, powder, and pickled beets.",
+                    image_url: "https://placehold.co/400x300/B27D8C/ffffff?text=Beetroot+Root"
+                },
+                "Radish": {
+                    scientific_name: "Raphanus sativus",
+                    category: "Vegetable",
+                    description: "A fast-growing root vegetable that prefers cooler weather. It has a crisp texture and a pungent flavor.",
+                    uses: "Fresh consumption in salads.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Flea beetles, cabbage maggots, and white rust.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-6 weeks.",
+                    planting: "Sow seeds 0.5 inches deep, 1-2 inches apart.",
+                    fertilizer: "Minimal fertilizer is needed. Can use a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 10,000 - 15,000 kg/hectare.",
+                    harvesting: "Harvest when roots are plump and firm. Pull from the ground.",
+                    market: "Stable demand for fresh consumption.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Pickles and salads.",
+                    image_url: "https://placehold.co/400x300/E84E40/ffffff?text=Radish+Root"
+                },
+                "Sweet Potato": {
+                    scientific_name: "Ipomoea batatas",
+                    category: "Vegetable",
+                    description: "A root crop that needs warm temperatures and well-drained soil. It is a versatile and nutritious vegetable.",
+                    uses: "Roasted, boiled, fried, and in desserts.",
+                    soil_ph: "5.8 - 6.2",
+                    pests_diseases: "Sweet potato weevil, fusarium wilt, and root rot.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "3-5 months.",
+                    planting: "Plant slips 12-18 inches apart.",
+                    fertilizer: "Requires high potassium and phosphorus.",
+                    irrigation: "Needs consistent moisture, but is drought-tolerant.",
+                    weeding: "Regular weeding is important.",
+                    yield: "Approx. 20,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when roots reach the desired size. Dig carefully.",
+                    market: "Stable demand for fresh and processed sweet potatoes.",
+                    storage: "Store in a cool, dark place.",
+                    value_addition: "Chips, fries, and flour.",
+                    image_url: "https://placehold.co/400x300/E8994E/ffffff?text=Sweet+Potato+Plant"
+                },
+                "Strawberry": {
+                    scientific_name: "Fragaria × ananassa",
+                    category: "Fruit",
+                    description: "A fruit that requires a mild climate and consistent moisture. It is a popular fruit for fresh consumption and desserts.",
+                    uses: "Fresh consumption, jams, and desserts.",
+                    soil_ph: "5.5 - 6.5",
+                    pests_diseases: "Grey mould, aphids, and spider mites.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-4 months to first harvest.",
+                    planting: "Plant bare-root plants 18 inches apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding and mulching.",
+                    yield: "Approx. 10,000 - 15,000 kg/hectare.",
+                    harvesting: "Harvest when fruits are fully red. Pick regularly.",
+                    market: "High demand for fresh and processed strawberries.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Jams, jellies, and frozen strawberries.",
+                    image_url: "https://placehold.co/400x300/E56860/ffffff?text=Fresh+Strawberries"
+                },
+                "Almond": {
+                    scientific_name: "Prunus dulcis",
+                    category: "Nut",
+                    description: "A nut tree that needs cool winters and hot, dry summers. It is a popular nut for snacking and a variety of food products.",
+                    uses: "Snacking, almond milk, and baking.",
+                    soil_ph: "6.5 - 7.5",
+                    pests_diseases: "Brown rot, peach twig borer, and mites.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "3-5 years to first fruiting.",
+                    planting: "Plant saplings 20-25 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs regular watering.",
+                    weeding: "Weed control is important for young trees.",
+                    yield: "Approx. 1,500 - 2,500 kg/hectare.",
+                    harvesting: "Harvest when hulls split open. Shake nuts from the tree.",
+                    market: "High global demand for nuts and dairy alternatives.",
+                    storage: "Store in a cool, dry place.",
+                    value_addition: "Almond milk, flour, and oil.",
+                    image_url: "https://placehold.co/400x300/A0815C/ffffff?text=Almond+Tree"
+                },
+                "Cashew": {
+                    scientific_name: "Anacardium occidentale",
+                    category: "Nut",
+                    description: "A tropical nut tree that requires a hot, humid climate. The cashew nut is a popular snack.",
+                    uses: "Snacking, cashew butter, and a dairy alternative.",
+                    soil_ph: "5.0 - 6.5",
+                    pests_diseases: "Tea mosquito bug, blossom blight, and anthracnose.",
+                    sunlight: "Full sun (8+ hours daily).",
+                    growth_duration: "3-4 years to first fruiting.",
+                    planting: "Plant saplings 20-25 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent water, but is drought-tolerant.",
+                    weeding: "Weed control is important for young trees.",
+                    yield: "Approx. 1,000 - 1,500 kg/hectare.",
+                    harvesting: "Harvest when the cashew apple and nut are mature.",
+                    market: "Stable demand for nuts.",
+                    storage: "Store in a cool, dry place.",
+                    value_addition: "Roasted nuts, butter, and cheese alternatives.",
+                    image_url: "https://placehold.co/400x300/E8D25A/ffffff?text=Cashew+Tree"
+                },
+                "Coffee": {
+                    scientific_name: "Coffea spp.",
+                    category: "Cash Crop",
+                    description: "A flowering plant grown in hilly areas with well-drained loamy soil. It is the source of the popular coffee bean.",
+                    uses: "Coffee beans for brewing.",
+                    soil_ph: "6.0 - 6.5",
+                    pests_diseases: "Coffee rust, coffee berry borer, and nematodes.",
+                    sunlight: "Partial shade to full sun.",
+                    growth_duration: "3-4 years to first fruiting.",
+                    planting: "Plant seedlings 6-8 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Weed control is important.",
+                    yield: "Approx. 1,000 - 2,000 kg/hectare.",
+                    harvesting: "Harvest when coffee cherries are red and ripe. Pick by hand or machine.",
+                    market: "High global demand for coffee.",
+                    storage: "Store green beans in a cool, dry place.",
+                    value_addition: "Roasted beans, instant coffee, and flavored coffee.",
+                    image_url: "https://placehold.co/400x300/A0815C/ffffff?text=Coffee+Beans"
+                },
+                "Tea": {
+                    scientific_name: "Camellia sinensis",
+                    category: "Cash Crop",
+                    description: "Grows best in cool, humid, highland regions with acidic soil. Its leaves are used to make tea.",
+                    uses: "Tea leaves for beverages.",
+                    soil_ph: "4.5 - 5.5",
+                    pests_diseases: "Red spider mite, looper caterpillar, and blister blight.",
+                    sunlight: "Full sun to partial shade.",
+                    growth_duration: "3-5 years to first harvest.",
+                    planting: "Plant seedlings 3-4 ft apart.",
+                    fertilizer: "Requires high nitrogen fertilizer.",
+                    irrigation: "Needs consistent high moisture.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 1,500 - 2,500 kg/hectare.",
+                    harvesting: "Harvest young leaves and buds. Pluck by hand.",
+                    market: "High global demand.",
+                    storage: "Store dried leaves in a cool, dry place.",
+                    value_addition: "Black tea, green tea, and flavored tea.",
+                    image_url: "https://placehold.co/400x300/80BA82/ffffff?text=Tea+Plantation"
+                },
+                "Apple": {
+                    scientific_name: "Malus domestica",
+                    category: "Fruit",
+                    description: "A fruit that needs a cool climate and a distinct winter season. Apples are one of the most widely consumed fruits in the world.",
+                    uses: "Fresh consumption, cider, and desserts.",
+                    soil_ph: "6.0 - 7.0",
+                    pests_diseases: "Apple scab, codling moth, and fire blight.",
+                    sunlight: "Full sun (6-8 hours daily).",
+                    growth_duration: "3-5 years to first fruiting.",
+                    planting: "Plant saplings 10-20 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture, especially during fruit development.",
+                    weeding: "Regular weeding and mulching.",
+                    yield: "Approx. 15,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is firm and ripe.",
+                    market: "Stable demand for fresh fruit and processed products.",
+                    storage: "Store in a cool, dark place.",
+                    value_addition: "Cider, apple sauce, and juice.",
+                    image_url: "https://placehold.co/400x300/E56860/ffffff?text=Apple+Tree"
+                },
+                "Pomegranate": {
+                    scientific_name: "Punica granatum",
+                    category: "Fruit",
+                    description: "A fruit tree that thrives in warm, semi-arid climates. The fruit is known for its juicy, ruby-red seeds.",
+                    uses: "Fresh consumption, juice, and a culinary ingredient.",
+                    soil_ph: "5.5 - 7.0",
+                    pests_diseases: "Pomegranate butterfly, fruit spot, and fungal diseases.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "2-3 years to first fruiting.",
+                    planting: "Plant saplings 10-15 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture.",
+                    weeding: "Regular weeding and mulching.",
+                    yield: "Approx. 10,000 - 15,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is mature and has a red blush. Cut from the plant.",
+                    market: "Growing demand for fresh fruit and juice.",
+                    storage: "Store in a cool, dry place.",
+                    value_addition: "Juice, arils, and syrup.",
+                    image_url: "https://placehold.co/400x300/E84E40/ffffff?text=Pomegranate+Fruit"
+                },
+                "Guava": {
+                    scientific_name: "Psidium guajava",
+                    category: "Fruit",
+                    description: "A tropical fruit that can grow in a wide range of climates and soils. It is known for its unique fragrance and sweet taste.",
+                    uses: "Fresh consumption, juices, and jams.",
+                    soil_ph: "4.5 - 7.0",
+                    pests_diseases: "Guava wilt, mealybugs, and aphids.",
+                    sunlight: "Full sun (7+ hours daily).",
+                    growth_duration: "2-3 years to first fruiting.",
+                    planting: "Plant saplings 15-20 ft apart.",
+                    fertilizer: "Requires a balanced NPK fertilizer.",
+                    irrigation: "Needs consistent moisture, but is drought-tolerant.",
+                    weeding: "Regular weeding is necessary.",
+                    yield: "Approx. 20,000 - 30,000 kg/hectare.",
+                    harvesting: "Harvest when fruit is mature and has a yellow color. Pick by hand.",
+                    market: "Stable demand for fresh fruit and processed products.",
+                    storage: "Store in a refrigerator for a few days.",
+                    value_addition: "Juice, jam, and jelly.",
+                    image_url: "https://placehold.co/400x300/80C280/ffffff?text=Guava+Fruit"
+                }
+            };
+
+            // Function to create a crop suggestion card
+            function createCropCard(crop) {
+                const card = document.createElement('div');
+                card.classList.add('card', 'p-6', 'rounded-xl', 'shadow-md', 'flex', 'flex-col', 'items-center', 'text-center', 'transition', 'transform', 'hover:scale-105');
+                card.setAttribute('data-crop-name', crop.crop);
+                
+                const icon = document.createElement('div');
+                icon.classList.add('text-4xl', 'mb-2');
+                icon.innerHTML = cropIcons[crop.crop] || "🌱"; // Fallback icon
+
+                const name = document.createElement('h3');
+                name.classList.add('text-xl', 'font-semibold', 'text-green-800', 'mb-2');
+                name.textContent = crop.crop;
+
+                const description = document.createElement('p');
+                description.classList.add('text-sm', 'text-gray-600');
+                description.textContent = cropDetails[crop.crop].description || "No description available."; // Fallback description
+
+                card.appendChild(icon);
+                card.appendChild(name);
+                card.appendChild(description);
+                
+                card.addEventListener('click', () => showCropDetails(crop.crop));
+                
+                return card;
+            }
+
+            // Function to display detailed crop information
+            function showCropDetails(cropName) {
+                const crop = cropData.find(c => c.crop === cropName);
+                if (!crop) return;
+
+                const details = cropDetails[cropName];
+                
+                cropDetailContent.innerHTML = `
+                    <div class="flex flex-col items-center text-center mb-6">
+                        <div class="text-6xl mb-4">${cropIcons[cropName] || '🌱'}</div>
+                        <h2 class="text-4xl font-bold text-green-800 mb-2">${cropName}</h2>
+                        <p class="text-sm text-gray-500 italic">${details.scientific_name}</p>
+                    </div>
+
+                    <div class="mt-8 space-y-8 text-gray-700">
+                        <div class="detail-section-card">
+                            <h3 class="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Basic Crop Information
+                            </h3>
+                            <p class="text-base text-gray-700 leading-relaxed">${details.description}</p>
+                            <ul class="mt-4 space-y-2 text-sm">
+                                <li><span class="font-medium">Category:</span> ${details.category}</li>
+                                <li><span class="font-medium">Common Uses:</span> ${details.uses}</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-section-card">
+                            <h3 class="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 13h6m-3-3v6m5 5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                Agronomic Information
+                            </h3>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><span class="font-medium">Soil & pH:</span> ${crop.soil.join(', ')} soil, pH ${details.soil_ph}</li>
+                                <li><span class="font-medium">Season:</span> ${crop.season}</li>
+                                <li><span class="font-medium">Temperature:</span> ${crop.min_temp}°C to ${crop.max_temp}°C</li>
+                                <li><span class="font-medium">Rainfall:</span> ${crop.min_rain}mm to ${crop.max_rain}mm</li>
+                                <li><span class="font-medium">Sunlight:</span> ${details.sunlight}</li>
+                                <li><span class="font-medium">Growth Duration:</span> ${details.growth_duration}</li>
+                                <li><span class="font-medium">Planting:</span> ${details.planting}</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-section-card">
+                            <h3 class="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                Crop Care & Management
+                            </h3>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><span class="font-medium">Fertilizer:</span> ${details.fertilizer}</li>
+                                <li><span class="font-medium">Irrigation:</span> ${details.irrigation}</li>
+                                <li><span class="font-medium">Pests & Diseases:</span> ${details.pests_diseases}</li>
+                                <li><span class="font-medium">Weeding & Pruning:</span> ${details.weeding}</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-section-card">
+                            <h3 class="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2-3 .895-3 2S10.343 20 12 20M12 8c-1.657 0-3-.895-3-2s1.343-2 3-2h0c1.657 0 3 .895 3 2s-1.343 2-3 2z" />
+                                </svg>
+                                Yield & Harvesting
+                            </h3>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><span class="font-medium">Expected Yield:</span> ${details.yield}</li>
+                                <li><span class="font-medium">Harvesting:</span> ${details.harvesting}</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-section-card">
+                            <h3 class="text-xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2-3 .895-3 2S10.343 20 12 20M12 8c-1.657 0-3-.895-3-2s1.343-2 3-2h0c1.657 0 3 .895 3 2s-1.343 2-3 2z" />
+                                </svg>
+                                Market & Economic Info
+                            </h3>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><span class="font-medium">Market Trends:</span> ${details.market}</li>
+                                <li><span class="font-medium">Storage:</span> ${details.storage}</li>
+                                <li><span class="font-medium">Value Addition:</span> ${details.value_addition}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                resultsSection.classList.add('hidden');
+                detailsSection.classList.remove('hidden');
+            }
+
+            // Handle form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Get user inputs
+                const soilType = document.getElementById('soil-type').value;
+                const season = document.getElementById('season').value;
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                const rainfall = parseFloat(document.getElementById('rainfall').value);
+
+                // Filter crops based on rules
+                const matchingCrops = cropData.filter(crop => {
+                    // Convert user input and crop data to lowercase for reliable comparison
+                    const userSoilType = soilType.toLowerCase();
+                    const userSeason = season.toLowerCase();
+
+                    const soilMatch = crop.soil.map(s => s.toLowerCase()).includes(userSoilType);
+                    const seasonMatch = (crop.season.toLowerCase() === userSeason || crop.season.toLowerCase() === 'year-round' || (crop.season.toLowerCase() === 'winter' && userSeason === 'rabi'));
+                    const tempMatch = (temperature >= crop.min_temp && temperature <= crop.max_temp);
+                    const rainfallMatch = (rainfall >= crop.min_rain && rainfall <= crop.max_rain);
+
+                    // All conditions must be met
+                    return soilMatch && seasonMatch && tempMatch && rainfallMatch;
+                });
+
+                // Clear previous suggestions
+                suggestionsContainer.innerHTML = '';
+                
+                // Display results
+                if (matchingCrops.length > 0) {
+                    noResultsMessage.classList.add('hidden');
+                    resultsSection.classList.remove('hidden');
+                    detailsSection.classList.add('hidden'); // Hide details if navigating back to results
+                    matchingCrops.forEach(crop => {
+                        const card = createCropCard(crop);
+                        suggestionsContainer.appendChild(card);
+                    });
+                } else {
+                    noResultsMessage.classList.remove('hidden');
+                    resultsSection.classList.remove('hidden');
+                    detailsSection.classList.add('hidden'); // Hide details if no results
+                }
+            });
+            
+            backButton.addEventListener('click', () => {
+                detailsSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>
