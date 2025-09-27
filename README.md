@@ -1,2 +1,2 @@
 # AgriAI
-agriculture ai
+Your AI Partner for Smarter, Greener Farming Operations.
