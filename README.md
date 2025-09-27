@@ -1,2 +1,2 @@
-# agribot
+# AgriAI
 agriculture ai
